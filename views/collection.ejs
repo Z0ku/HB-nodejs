@@ -4,10 +4,56 @@
 <head>
    <title>HB</title>
    <% include comp/csslinks.ejs %>
+   <style>
+     .collBack{
+       background: url("/img/collectionBack_pics/<%=collId%>"),url("/img/collectionBack_pics/default.jpg");
+       background-size:     cover;                      /* <------ */
+       background-repeat:   no-repeat;
+       background-position: center center;
+     }
+   </style>
 </head>
 <body>
   <% include comp/nav.ejs %>
-
+  <% include comp/collectionHead.ejs %>
+  <div class='col-md-10 col-md-offset-1' style='padding-top:50px'>
+    <% include comp/itemsView.ejs %>
+  </div>
 </body>
 </html>
   <% include comp/jslinks.ejs %>
+<% if(collData.user_id == session.loginUserId){%>
+  <% include comp/uploadFunctions.ejs%>
+<%}%>
+<script>
+  <%if(collData.user_id == session.loginUserId){%>
+      $('#editNewItemPic').on('click',function(){
+        $('#newItemPic').click();
+      });
+      $('#newItemPic').change(function(){
+        previewFile(this,'#newItemPreview');
+      });
+      $('#submitNewItem').on('click',function(){
+        var Q = parseInt($('#newItemQuant').val());
+        var P = parseFloat($('#newTradePrice').val());
+        var formData = new FormData();
+        formData.append('coll_id',<%=collData.coll_id%>);
+        formData.append('user_id',<%=collData.user_id%>);
+        formData.append('itemName',$('#newItemName').val());
+        formData.append('itemDesc',$('#newItemDesc').val());
+        formData.append('itemQuant',Q);
+        formData.append('tradeStatus',$('#newTradeOpt').val());
+        formData.append('tradeDetails',$('#newTradeDesc').val());
+        formData.append('tradePrice',P);
+        formData.append('itemPic',$('#newItemPic')[0].files[0]);
+
+        $.ajax({
+          url : '/addItem',
+          type : "POST",
+          data : formData,
+          contentType : false,
+          processData : false
+        });
+      });
+  <%}%>
+</script>

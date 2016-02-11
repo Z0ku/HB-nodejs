@@ -38,8 +38,7 @@ var pool = mysql.createPool({
   password : '',
   database : 'hb_db',
   debug    :  false
-})
-
+});
 function md5HashString(str){
   var md5HashSum = crypto.createHash('md5');
   md5HashSum.update(str);
@@ -78,6 +77,19 @@ function makeValues(query,connection){
   }
   vals += valArr[i]+")";
   return vals;
+}
+function makeJoinConditions(query,connection){
+  var J = " ";
+  var i = 0;
+  for(var table in query){
+    if(table.toString().search('JOIN') === -1){
+      J += table+"="+query[table]+" ";
+      i++;
+    }else{
+      J += table+" "+query[table]+" ON ";
+    }
+  }
+  return J;
 }
 function exists(query,table,res,callback){
   pool.getConnection(function(err,connection){
@@ -122,7 +134,29 @@ function getQueryData(query,table,col,res,callback){
              return callback(false);
            }
          });
+     }else{
+       console.log(err);
+       return callback(false);
      }
+  });
+}
+function getQueryDataJoin(query,cond,table,col,callback){
+  pool.getConnection(function(err,connection){
+    if(!err){
+      console.log('connected as id ' + connection.threadId);
+      var J = makeJoinConditions(query,connection);
+      connection.query("SELECT "+col+" FROM "+table+""+J+cond,function(err,rows){
+        if(err){
+          console.log(err);
+          return callback(false);
+        }else{
+          return callback(rows);
+        }
+      });
+    }else{
+      console.log(err);
+      return callback(false);
+    }
   });
 }
 function insertFull(query,table,res,callback){
@@ -205,31 +239,27 @@ app.get('/users/:id/collections',function(req,res){
   var user = {user_id:req.params.id};
   getQueryData(user,'users','user_id,username',res,function(data){
     if(data){
-      pool.getConnection(function(err,connection){
-         if(!err){
-           console.log('connected as id ' + connection.threadId);
-           var Q = "SELECT collections.*,count(items.item_id) as itemCount FROM collections "+
-                   "LEFT JOIN items ON collections.coll_id = items.coll_id "+
-                   "WHERE collections.user_id="+connection.escape(data[0].user_id)+" "+
-                   "GROUP BY collections.coll_id";
-           connection.query(Q,function(err,collection){
-               connection.release();
-               if(err){
-                 res.send('Error Connecting to DataBase')
-               }else{
-                 res.render('profile',{session:req.session,tab:1,user:{name:data[0].username,id:data[0].user_id},colls:collection});
-               }
-             });
-         }else{
-           console.log(err);
-           res.send('Error Connecting to DataBase');
-         }
+      var query = {'LEFT JOIN':'items','collections.coll_id':'items.coll_id','JOIN':'users','collections.user_id':data[0].user_id.toString()};
+      getQueryDataJoin(query,"GROUP BY collections.coll_id",'collections','collections.*,count(items.item_id) as itemCount',
+                       function(collection){
+        if(collection){
+          res.render('profile',{session:req.session,tab:1,user:{name:data[0].username,id:data[0].user_id},colls:collection});
+        }else{
+          res.send("ERROR");
+        }
       });
+    }else{
+
     }
   });
 });
 app.get('/collection/:collId',function(req,res){
-  res.send(req.params.collId);
+  var query = {'JOIN':'users','users.user_id':'collections.user_id'};
+  var collId = parseInt(req.params.collId);
+  getQueryDataJoin(query,"WHERE collections.coll_id="+collId,'collections','collections.*,users.username,users.user_id'
+  ,function(data){
+    res.render('collection',{session:req.session,collId:collId,collData:data[0]});
+  })
 });
 app.get('/checkElem',function(req,res){
    exists(req.query,"users",res,function(data){
@@ -286,6 +316,12 @@ app.post('/addCollection',function (req, res){
         }
       });
     });
+});
+app.post('/addItem',function(req,res){
+  var form = new formidable.IncomingForm();
+  form.parse(req, function(err, fields, files){
+    console.log(fields);
+  });
 });
 app.get('/registerUser',function(req,res){
   req.query['password'] = md5HashString(req.query['password']).toString();

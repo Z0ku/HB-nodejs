@@ -1,0 +1,43 @@
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Add New Item</button>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">Add New Item</h4>
+      </div>
+      <div class="modal-body text-center">
+        <img src='/img/item_pics/default' id='newItemPreview'>
+        <input type='file' id='newItemPic' style='visibility:hidden'>
+        <button class='btn btn-primary' style='margin-bottom:25px' id='editNewItemPic'>Choose Item Picture</button>
+        <div class="form-group">
+          <label for="newItemName" class="control-label">Item Name:</label>
+          <input type="text" class="form-control" id="newItemName">
+        </div>
+        <div class="form-group">
+          <label for="newItemDesc" class="control-label">Item Description:</label>
+          <textarea class="form-control" id="newItemDesc"></textarea>
+        </div>
+        <div class="form-inline">
+          <label for="newItemQuant" class="control-label">Quantity:</label>
+          <input type="number" class="form-inline" id="newItemQuant" min='1'>
+          <label for="newTradeOpt" class="control-label">Trading:</label>
+          <select class="form-inline" id="newTradeOpt">
+            <option selected disabled value='-1'>Choose</option>
+            <option value='0'>Trading</option>
+            <option value='1'>Not Trading</option>
+          </select>
+          <label for="newTradePrice" class="control-label">Trade Price:</label>
+          <input type="text" class="form-inline" id="newTradePrice">
+        </div>
+        <div class="form-group">
+          <label for="newTradeDesc" class="control-label">Trade Description:</label>
+          <textarea class="form-control" id="newTradeDesc"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id='submitNewItem'>Add Item</button>
+      </div>
+    </div>
+  </div>
+</div>

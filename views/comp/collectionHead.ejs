@@ -1,0 +1,34 @@
+<div class='col-md-12 collBack'>
+  <div class='col-md-10 col-md-offset-1 collHead'>
+    <div class='col-md-12'>
+      <div class='row'>
+        <div class='col-md-4 col-md-offset-4'>
+          <div class='row'>
+            <div class='col-md-8 col-md-offset-2 collHeadPic'>
+              <img src='/img/collection_pics/<%=collId%>' onerror="this.src='/img/collection_pics/default.png'">
+            </div>
+          </div>
+        </div>
+        <div class='col-md-12'>
+          <div class='row'>
+            <div class='col-md-3'>
+              <div class='row'>
+                <div class='col-md-7 ownerPic'>
+                  <img src='/img/profile_pics/<%=collData.user_id%>' onerror="this.src='/img/profile_pics/default.jpg'" >
+                </div>
+                <div class='col-md-5'>
+                  <h3>Owner: </h3>
+                  <h4><%=collData.username%></h4>
+                </div>
+              </div>
+            </div>
+            <div class='col-md-6 collDetails text-center'>
+              <h3><%=collData.collName%></h3>
+              <p><%=collData.collDesc%></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
