@@ -1,0 +1,38 @@
+
+
+input{
+    border-radius: 20px !important;
+    opacity: 0.6;
+}
+
+.has-error .form-control{
+    border-color: red !important;
+}
+.has-error .form-control{
+    border-width: 3px !important;
+}
+i{
+    z-index: 1;
+}
+.login-form{
+    margin-top: 200px !important;
+}
+/* enable absolute positioning */
+.inner-addon {
+    position: relative;
+}
+
+/* style icon */
+.inner-addon .glyphicon {
+  position: absolute;
+  padding: 10px 10px 10px 30px;
+  pointer-events: none;
+}
+
+/* align icon */
+.left-addon .glyphicon  { left:  0px;}
+.right-addon .glyphicon { right: 0px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  40px; }
+.right-addon input { padding-right: 40px; }

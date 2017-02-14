@@ -1,0 +1,104 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/*
+    Created on : 01 21, 17, 12:25:24 PM
+    Author     : rizaller
+*/
+@font-face{
+    font-family: righteous;
+    src: url("../fonts/Righteous-Regular.ttf");
+}
+body{
+    background: #233237;
+    color: #C5C1C0 !important;
+    font-family: righteous !important;
+}
+
+img{
+   height: 100% !important;
+}
+.navbar-default{
+   background-color: #0A1612;
+   margin-bottom: 0px !important;
+   border: none;
+   border-radius: 0px !important;
+}
+.side-nav{
+  height: 100%;
+  position: fixed;
+  background-color: #0A1612;
+}
+.side-sites{
+  margin-top: 40px;
+}
+.side-sites ul{
+  padding: 0;
+  list-style-type: none;
+}
+.side-sites li{
+  font-size: 30px;
+  margin-top: 18px;
+}
+
+
+a{
+  color: inherit;
+  text-decoration: none !important;
+}
+a:hover{
+  color: inherit;
+}
+img{
+  height: inherit;
+  width: 100%;
+}
+.addForm{
+  display: none;
+}
+.header{
+  border-bottom: 1px solid gray;
+}
+.cCont{
+  margin-top: 30px;
+}
+
+.colPicCont{
+  height: 200px;
+  padding: 0;
+}
+
+.cLink{
+  height: 100%;
+  width: inherit;
+}
+.addColl{
+  padding-top: 50px;
+}
+.title{
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.profile-pic{
+  height: 190px;
+}
+.img-container{
+  padding: 0;
+}
+.form-control:focus{
+    box-shadow: none;
+}
+.addColl img{
+  height: 100px !important;
+  width: 100px;
+}
+.error{
+    font-size:17px;
+    color:#cc0000;
+    margin-top:0px !important;
+    margin-bottom:15px;
+    height:10px !important;
+    opacity: 0;
+}

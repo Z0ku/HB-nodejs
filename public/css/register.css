@@ -1,0 +1,57 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 01 23, 17, 9:23:23 PM
+    Author     : rizaller
+*/
+
+.register-form{
+    margin-top: 100px;
+}
+.col-form-label{
+    height:55px !important;
+}
+input,select{
+    border-radius: 20px !important;
+    opacity: 0.6;
+}
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.date input{
+    border-radius: 0px !important;
+}
+#month{
+    border-radius: 100px 0px 0px 100px !important;
+    width: 90px;
+}
+#day{
+    border-radius: 0px !important;
+    margin-right: -5px;
+    margin-left: -5px;
+}
+#year{
+    border-radius: 0px 100px 100px 0px !important;
+    width: 110px
+}
+label{
+   font-size: 20px;
+}
+.submitRegister{
+    margin-top: 15px;
+}
+.glyphicon{
+    margin-left: 10px;
+}
+.has-error .form-control{
+    border-width: 3px !important;
+}
+.has-success .form-control{
+    border-width: 3px !important;
+}
