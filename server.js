@@ -99,6 +99,9 @@ app.get('/', function(req, res){
 app.get('/login', function(req, res){
   res.render('login');
 });
+app.get('/register', function(req, res){
+  res.render('register');
+});
 app.get('/checkUser',function(req,res){
    exists(req.query,"users",function(data){
      if(data){
@@ -118,4 +121,4 @@ app.get('/confirmUser',function(req,res){
   });
 });
 
-app.listen(8888);
+app.listen(88);
