@@ -29,7 +29,7 @@ body{
   height:400px;
   position: relative;
 }
-.profilePicCont{
+.profileCont{
   height:200px;
   position:absolute;;
   bottom: 0px;
@@ -37,11 +37,11 @@ body{
 .profilePic{
   height:150px;
   padding: 0;
-  border-radius: 75px;
-
+  border-radius: 25px;
+  border: 4px solid white;
 }
 
-.row img{
+img{
    width: 100% !important;
 }
 .navbar-default .navbar-nav > li > a{

@@ -57,7 +57,7 @@ function makeValues(query,connection){
   vals += valArr[i]+")";
   return vals;
 }
-function exists(query,table,callback){
+function exists(query,table,res,callback){
   pool.getConnection(function(err,connection){
      if(checkConn(err,connection) == true){
        var cond = makeConditions(query,connection);
@@ -81,7 +81,7 @@ function exists(query,table,callback){
      }
   });
 }
-function getQueryData(query,table,col,callback){
+function getQueryData(query,table,col,res,callback){
   pool.getConnection(function(err,connection){
      if(checkConn(err,connection) == true){
        var cond = makeConditions(query,connection);
@@ -101,7 +101,7 @@ function getQueryData(query,table,col,callback){
      }
   });
 }
-function insertFull(query,table,callback){
+function insertFull(query,table,res,callback){
   pool.getConnection(function(err,connection){
      if(checkConn(err,connection) == true){
        var vals = makeValues(query,connection);
@@ -137,10 +137,10 @@ app.get('/logout',function(req,res){
   res.render('login',{session:req.session});
 });
 app.get('/users/:name',function(req,res){
-  res.render('profile',{session:req.session});
+  res.render('profile',{session:req.session,user:req.params.name});
 });
 app.get('/checkElem',function(req,res){
-   exists(req.query,"users",function(data){
+   exists(req.query,"users",res,function(data){
      if(data){
        res.send('success');
      }else{
@@ -151,7 +151,7 @@ app.get('/checkElem',function(req,res){
 app.get('/confirmUser',function(req,res){
   var user = {username:req.query['username']};
   var inputPass = md5HashString(req.query['inputPass']).toString();
-  getQueryData(user,"users","password",function(pass){
+  getQueryData(user,"users","password",res,function(pass){
     if(pass[0].password === inputPass){
       loginUser(req.query.username,req.session);
       res.send('success');
@@ -162,11 +162,9 @@ app.get('/confirmUser',function(req,res){
 });
 app.get('/registerUser',function(req,res){
   req.query['password'] = md5HashString(req.query['password']).toString();
-  insertFull(req.query,'users',function(data){
+  insertFull(req.query,'users',res,function(data){
 
   });
 
 });
-
-
 app.listen(80);
