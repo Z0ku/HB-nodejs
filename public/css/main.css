@@ -7,6 +7,10 @@ and open the template in the editor.
     Created on : 01 21, 17, 12:25:24 PM
     Author     : rizaller
 */
+input{
+    border-radius: 20px !important;
+    opacity: 0.6;
+}
 @font-face{
     font-family: righteous;
     src: url("../fonts/Righteous-Regular.ttf");
@@ -16,9 +20,29 @@ body{
     color: rgba(132, 117, 119, 1);
     font-family: righteous !important;
 }
+.separator{
+  border-left: 2px solid rgba(132, 117, 119, 1);
+  border-right: 2px solid rgba(132, 117, 119, 1);
+}
+.profileHead{
+  background-size: 100% 100% !important;
+  height:400px;
+  position: relative;
+}
+.profilePicCont{
+  height:200px;
+  position:absolute;;
+  bottom: 0px;
+}
+.profilePic{
+  height:150px;
+  padding: 0;
+  border-radius: 75px;
 
-img{
-   height: 100% !important;
+}
+
+.row img{
+   width: 100% !important;
 }
 .navbar-default .navbar-nav > li > a{
      color: rgba(229, 230, 228, 1) !important;

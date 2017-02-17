@@ -25,20 +25,20 @@ and open the template in the editor.
                                <div class="row">
                                    <div class="col-md-12 form-group ">
                                        <label>Username</label>
-                                     <input type="text" class="form-control req newUsername" required placeholder="Username">
+                                     <input type="text" class="form-control newUsername regInput" required placeholder="Username">
                                    </div>
                                    <div class="col-md-12 error text-center"></div>
                                    <div class="col-md-12 form-group">
                                      <label>Email</label>
-                                     <input type="email" class="form-control newEmail" required placeholder="Email">
+                                     <input type="email" class="form-control newEmail regInput" required placeholder="Email">
                                    </div>
                                    <div class="col-md-12 form-group">
                                      <label>Password</label>
-                                     <input type="password" class="form-control newPass" required placeholder="Password">
+                                     <input type="password" class="form-control newPass regInput" required placeholder="Password">
                                    </div>
                                    <div class="col-md-12 form-group">
                                      <label>Confirm Password</label>
-                                     <input type="password" class="form-control confirmPass" required placeholder="Confirm Password">
+                                     <input type="password" class="form-control confirmPass regInput" required placeholder="Confirm Password">
                                    </div>
                                </div>
                                <div class="col-md-6 col-md-offset-3 form-group text-center submitRegister ">
@@ -53,13 +53,14 @@ and open the template in the editor.
           </div>
   </body>
 </html>
-<?php require('php/comp/jslinks.php')?>
+<% include comp/jslinks.ejs %>
 <script type="text/javascript">
 $(document).ready(function(){
     var U = 0;
     var FC = 0;
     var thread;
     var count;
+    var checkTime = 1200;
     var E = $('.error');
     thread = setInterval(function(){
         count = 0;
@@ -94,7 +95,7 @@ $(document).ready(function(){
      function fetchUser(){
         $.ajax({
                 type: "get",
-                url: "/checkUser",
+                url: "/checkElem",
                 data: {username :$(".newUsername").val()},
                 success: function(result){
                     checkUser(result);
@@ -103,7 +104,7 @@ $(document).ready(function(){
 
     }
     function checkUser(result){
-         if(result.charAt(0) === "#"){
+         if(result == "fail"){
               correctInput($('.newUsername'));
               clearError(E);
             }else{
@@ -114,38 +115,55 @@ $(document).ready(function(){
     function registerUser(){
       $.ajax({
               type: "get",
-              url:  "php/registerUser.php",
-              data: {newUsername:$(".newUsername").val(),newEmail:$(".newEmail").val(),newPass:$(".confirmPass").val()}
+              url:  "/registerUser",
+              data: {user_id:"",username:$(".newUsername").val(),password:$(".confirmPass").val(),email:$(".newEmail").val()}
       })
-      window.location.href = "login.php";
+      window.location.href = "/login";
     }
-    $(".newUsername").on("focusout",function(){
+    var userThread;
+    $(".newUsername").on("keypress",function(){
+      clearInterval(userThread);
+      userThread = setTimeout(function(){
         if($(".newUsername").val() !== ""){
             fetchUser();
         }else{
-            incorrectInput(this);
+            incorrectInput($(".newUsername"));
         }
-
+      }
+      ,checkTime);
+    });
+    var emailThread;
+    $(".newEmail").on("keypress",function(){
+      clearInterval(emailThread);
+      emailThread = setTimeout(function(){
+          var C =  $(".newEmail").val();
+          if(C !== "" && C.indexOf('@') > -1 && C.indexOf('@')+1 <= C.length-1){
+            correctInput($(".newEmail"));
+          }else{
+            incorrectInput($(".newEmail"));
+          }
+        }
+      ,checkTime);
     });
 
-    $(".newEmail").on("focusout",function(){
-        var C =  $(".newEmail").val();
-        if(C !== "" && C.indexOf('@') > -1 && C.indexOf('@')+1 <= C.length-1){
-          correctInput(this);
-        }else{
-          incorrectInput(this);
-        }
+    var passThread;
+    function checkPass(){
+      clearInterval(passThread);
+      passThread = setTimeout(function(){
+          if($(".confirmPass").val() !== "" && $(".confirmPass").val() === $(".newPass").val()){
+              correctInput($(".newPass"));
+              correctInput($(".confirmPass"));
+          }else{
+              incorrectInput($(".newPass"));
+              incorrectInput($(".confirmPass"));
+          }
+        },checkTime);
+    }
+    $(".confirmPass").on("keypress",function(){
+      checkPass();
     });
-
-
     $(".confirmPass").on("focusout",function(){
-        if($(this).val() !== "" && $(this).val() === $(".newPass").val()){
-            correctInput($(".newPass"));
-            correctInput(this);
-        }else{
-            incorrectInput($(".newPass"));
-            incorrectInput(this);
-        }
+      checkPass();
     });
     $("#reg").on("click",function(){
       if(FC === 1){
@@ -158,7 +176,7 @@ $(document).ready(function(){
        }
     });
 
-    $("input").addClass("input-lg");
+    $(".regInput").addClass("input-lg");
 
 
 });

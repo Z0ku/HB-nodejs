@@ -1,10 +1,5 @@
 
 
-input{
-    border-radius: 20px !important;
-    opacity: 0.6;
-}
-
 .has-error .form-control{
     border-color: red !important;
 }
