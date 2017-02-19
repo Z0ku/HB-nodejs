@@ -1,16 +1,34 @@
 <div class='col-md-12 profileBack' style="background:url('/img/background_pics/default.jpeg')">
   <div class='row profileHead'>
     <div class='col-md-10 col-md-offset-1 profileCont'>
-      <div class='row'>
-        <div class='col-md-3'>
-          <a href='#'>
-            <img src='/img/profile_pics/default.jpg' class='profilePic'>
-          </a>
-        </div>
-        <div class='col-md-9'>
+      <div class='col-md-3 profilePicCont profilePicCont'>
+        <a href='#'>
+          <img src='/img/profile_pics/<%=user.id%>' onerror="this.src='/img/profile_pics/default.jpg'" class='profilePic'>
+        </a>
+      <% if(user.name == session.loginUser){%>
+        <button type='button' class='btn btn-primary editBtn' id='editProfilePic'>Edit</button>
+        <input type='file' id='newProfPic'>
 
-        </div>
+      <%}%>
       </div>
+      <div class='col-md-9 profileNav'>
+        <h1><%=user.name%>
+          <% if(user.name == session.loginUser){%>
+            <button type='button' class='btn btn-primary showEdits'>Edit</button>
+          <% }else{%>
+            <button type='button' class='btn btn-success'>Add Friend</button>
+          <%}%>
+        </h1>
+
+        <p>User Description</p>
+        <div class='profileNavTabs'>
+          <ul class="nav nav-tabs">
+            <li role="presentation" ><a href="/users/<%=user.name%>">Feed</a></li>
+            <li role="presentation" ><a href="/users/<%=user.name%>/collections">Collections</a></li>
+            <li role="presentation" ><a href="#">Trades</a></li>
+            <li role="presentation"><a href="#">Friends</a></li>
+          </ul>
+        </div>
     </div>
   </div>
 </div>

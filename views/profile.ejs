@@ -10,10 +10,86 @@
   <div class='container-fluid'>
     <div class='row'>
       <% include comp/profileHead.ejs %>
-      <div class='col-md-10 col-md-offset-1'>
+      <div class='col-md-10 col-md-offset-1 mainCont'>
+        <div class='row'>
+          <%switch(tab){
+            case 0:break;
+            case 1:%>
+            <% include comp/collectionsView.ejs %>
+            <%break;
+          }%>
+        </div>
       </div>
     </div>
   </div>
 </body>
 </html>
 <% include comp/jslinks.ejs %>
+<%if(user.name == session.loginUser){%>
+  <% include comp/uploadFunctions.ejs%>
+<%}%>
+<script>
+  $("li[role='presentation']").eq('<%=tab%>').addClass('active');
+  <%if(user.name == session.loginUser){%>
+      <%include comp/uploadProfile.ejs%>
+      <%switch(tab){
+        case 1:%>
+        $('.startColl').on('click',function(){
+          $('.newCollForm').slideToggle();
+        });
+        $('#editNewCollPic').on('click',function(){
+          $('#newCollPic').click();
+        });
+        $('#newCollPic').change(function(){
+          previewFile(this,'.preview');
+        });
+        var collNameThread;
+        function checkCollName(){
+          clearInterval(collNameThread);
+          collNameThread = setTimeout(function(){
+            $.ajax({
+              type:'get',
+              url:'/checkCollElem',
+              data:{user_id:<%=user.id%>,collName:$('#newCollName').val()},
+              success:function(result){
+                if(result == 'success'){
+                  showError('You Have a Collection With That Name',$('.error'));
+                  $('#newCollName').parent().addClass('has-success');
+                }else{
+                  $('#newCollName').parent().removeClass('has-error');
+                  $('#newCollName').parent().addClass('has-success');
+                }
+              }
+            });
+          },2000);
+        }
+        $('#newCollName').on('keypress',function(){
+          checkCollName();
+        });
+        $('#newCollName').on('focusout',function(){
+          checkCollName();
+          if($(this).val() === ""){
+            clearInterval(collNameThread);
+            $(this).parent().removeClass('has-success');
+            $(this).parent().addClass('has-error');
+          }
+        });
+        $('#submitNewColl').on('click',function(){
+          if($('#newCollName').parent().hasClass('has-error') || $('#newCollName').val() == ""){
+            $('#newCollName').parent().removeClass('has-success');
+            $('#newCollName').parent().addClass('has-error');
+          }else{
+            $.ajax({
+              type: 'get',
+              url: '/addCollection',
+              data : {user_id:<%=session.loginUserId%>,collName:$('#newCollName').val(),collDesc:$('#newCollDesc').val()},
+              success: function(result){
+                uploadFile('#newCollPic','CollPic');
+              }
+            });
+          }
+        });
+        <%break;
+      }%>
+  <%}%>
+</script>

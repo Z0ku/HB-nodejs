@@ -1,0 +1,9 @@
+$('.showEdits').on('click',function(){
+  $('.editBtn').toggle();
+});
+$('#editProfilePic').on("click",function(){
+  $('#newProfPic').click();
+});
+$('#newProfPic').change(function(){
+  uploadPic('#newProfPic','.profilePic','profilePic',<%=user.id%>);
+});

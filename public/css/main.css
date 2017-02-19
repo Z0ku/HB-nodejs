@@ -7,7 +7,7 @@ and open the template in the editor.
     Created on : 01 21, 17, 12:25:24 PM
     Author     : rizaller
 */
-input{
+input,textarea{
     border-radius: 20px !important;
     opacity: 0.6;
 }
@@ -20,6 +20,16 @@ body{
     color: rgba(132, 117, 119, 1);
     font-family: righteous !important;
 }
+.newCollForm{
+  display: none;
+  margin-bottom: 20px;
+}
+.has-error .form-control{
+  border-width: medium !important;
+}
+.has-success .form-control{
+border-width: medium !important; 
+}
 .separator{
   border-left: 2px solid rgba(132, 117, 119, 1);
   border-right: 2px solid rgba(132, 117, 119, 1);
@@ -28,15 +38,50 @@ body{
   background-size: 100% 100% !important;
   height:400px;
 }
+.editBtn{
+  display: none;
+}
+.mainCont{
+  padding-top: 25px;
+}
 .profileHead{
   position: relative;
+  height: inherit;
+  color: rgba(251, 251, 242, 1);
+}
+.nav-tabs > li.active > a{
+  color: rgba(132, 117, 119, 1);
+}
+.profilePicCont{
+  position: relative;
+}
+#editProfilePic{
+  position: absolute;
+  top: 50px;
+  left: 38%;
+}
+#newProfPic{
+  visibility: hidden;
 }
 .profileCont{
-  position:absolute;;
+  position:absolute;
+  height: 200px;
   bottom: 0px;
 }
+
 .profileNav{
-  background: none;
+  height: 100%;
+  position: relative;;
+}
+.profileNav .btn{
+  opacity: 0.6;
+}
+.profileNavTabs{
+  position: absolute;
+  bottom: 0;
+}
+.nav-tabs{
+  border: none;
 }
 .profilePic{
   height:150px;

@@ -1,4 +1,7 @@
 var express = require('express');
+var path = require('path');
+var formidable = require('formidable');
+var fs = require('fs');      //File System - for file manipu
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var postData = bodyParser.urlencoded({extended: false});
@@ -6,9 +9,9 @@ var app = express();
 var mysql = require('mysql');
 var crypto = require('crypto');
 
-app.use(session({ secret: 'keyboard cat',resave: false,saveUninitialized:false, cookie: { maxAge: 60000}}));
-
-//app.set('views', __dirname + '/views');
+app.use(session({ secret: 'keyboard cat',resave: false,saveUninitialized:false, cookie: { maxAge: 60*60000}}));
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 
 //app.use(session({secret: 'ssshhhhh'}));
@@ -37,9 +40,13 @@ function checkConn(err,connection){
 }
 function makeConditions(query,connection){
   var cond = "";
+  var condArr = [];
+  var i = 0;
   for(var key in query){
-    cond += key+"="+connection.escape(query[key])+" ";
+    condArr[i] = " "+key+"="+connection.escape(query[key])+"";
+    i++;
   }
+  cond = condArr.join('AND');
   return cond;
 }
 function makeValues(query,connection){
@@ -71,7 +78,7 @@ function exists(query,table,res,callback){
                }
            }else{
 
-             console.log(err);
+             console.log("SELECT * FROM "+table+" WHERE "+cond);
              return callback(false);
            }
          })
@@ -116,10 +123,36 @@ function insertFull(query,table,res,callback){
      }
   });
 }
-function loginUser(username,session){
+function loginUser(username,userId,session){
   session.loginUser = username;
+  session.loginUserId = userId;
 }
-app.use(express.static('./public'));
+function uploadFile(req,res,filePath,filename){
+  var form = new formidable.IncomingForm();
+  // specify that we want to allow the user to upload multiple files in a single request
+  form.multiples = true;
+  // store all uploads in the /uploads directory
+  form.uploadDir = path.join(__dirname, '/public'+filePath);
+  // every time a file has been uploaded successfully,
+  // rename it to it's orignal name
+  form.on('file', function(field, file) {
+  fs.rename(file.path, path.join(form.uploadDir,filename.toString()));
+  });
+
+  // log any errors that occur
+  form.on('error', function(err) {
+  console.log('An error has occured: \n' + err);
+  });
+
+  // once all the files have been uploaded, send a response to the client
+  form.on('end', function() {
+  res.end('success');
+  });
+
+  // parse the incoming request containing the form data
+  form.parse(req);
+};
+//app.use(express.static('./public'));
 
 app.set('view engine', 'ejs');
 
@@ -134,10 +167,24 @@ app.get('/register', function(req, res){
 });
 app.get('/logout',function(req,res){
   req.session.loginUser = false;
+  req.session.loginUserId = false;
   res.render('login',{session:req.session});
 });
 app.get('/users/:name',function(req,res){
-  res.render('profile',{session:req.session,user:req.params.name});
+  var user = {username:req.params.name};
+  getQueryData(user,"users",'user_id',res,function(data){
+    res.render('profile',{session:req.session,tab:0,user:{name:user.username,id:data[0].user_id}});
+  });
+});
+app.get('/users/:name/collections',function(req,res){
+  var user = {username:req.params.name};
+  getQueryData(user,'users','user_id',res,function(data){
+    if(data[0].user_id){
+      getQueryData({user_id:data[0].user_id},"collections","*",res,function(C){
+        res.render('profile',{session:req.session,tab:1,user:{name:user.username,id:data[0].user_id},C:C});
+      });
+    }
+  });
 });
 app.get('/checkElem',function(req,res){
    exists(req.query,"users",res,function(data){
@@ -148,16 +195,48 @@ app.get('/checkElem',function(req,res){
      }
    });
 });
+app.get('/checkCollElem',function(req,res){
+
+   exists(req.query,"collections",res,function(data){
+     if(data){
+       res.send('success');
+     }else{
+       res.send('fail');
+     }
+   });
+});
 app.get('/confirmUser',function(req,res){
   var user = {username:req.query['username']};
   var inputPass = md5HashString(req.query['inputPass']).toString();
-  getQueryData(user,"users","password",res,function(pass){
+  getQueryData(user,"users","password,user_id",res,function(pass){
     if(pass[0].password === inputPass){
-      loginUser(req.query.username,req.session);
+      loginUser(req.query.username,pass[0].user_id,req.session);
       res.send('success');
     }else{
       res.send('#Wrong Password');
     }
+  });
+});
+app.post('/uploadProfilePic',postData,function (req, res){
+  uploadFile(req,res,'/img/profile_pics/',req.session.loginUserId);
+});
+app.post('/uploadBackPic',postData,function (req, res){
+  uploadFile(req,res,'/img/background_pics/',req.session.loginUserId);
+});
+app.post('/uploadCollPic',postData,function (req, res){
+  uploadFile(req,res,'/img/collection_pics/',req.session.loginUserId);
+});
+app.get('/addCollection',function (req, res){
+  var D = new Date();
+  var curr_date = ""+D.getFullYear()+"-"+D.getMonth()+"-"+D.getDate();
+  var newColl = {coll_id:"",
+                 user_id:req.query.user_id,
+                 collName:req.query.collName,
+                 collDesc:req.query.collDesc,
+                 dateStarted:curr_date
+                }
+  insertFull(newColl,'collections',res,function(data){
+
   });
 });
 app.get('/registerUser',function(req,res){
@@ -167,4 +246,4 @@ app.get('/registerUser',function(req,res){
   });
 
 });
-app.listen(80);
+app.listen(88);
