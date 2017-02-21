@@ -34,61 +34,7 @@
       <%include comp/uploadProfile.ejs%>
       <%switch(tab){
         case 1:%>
-        $('.startColl').on('click',function(){
-          $('.newCollForm').slideToggle();
-        });
-        $('#editNewCollPic').on('click',function(){
-          $('#newCollPic').click();
-        });
-        $('#newCollPic').change(function(){
-          previewFile(this,'.preview');
-        });
-        var collNameThread;
-        function checkCollName(){
-          clearInterval(collNameThread);
-          collNameThread = setTimeout(function(){
-            $.ajax({
-              type:'get',
-              url:'/checkCollElem',
-              data:{user_id:<%=user.id%>,collName:$('#newCollName').val()},
-              success:function(result){
-                if(result == 'success'){
-                  showError('You Have a Collection With That Name',$('.error'));
-                  $('#newCollName').parent().addClass('has-success');
-                }else{
-                  $('#newCollName').parent().removeClass('has-error');
-                  $('#newCollName').parent().addClass('has-success');
-                }
-              }
-            });
-          },2000);
-        }
-        $('#newCollName').on('keypress',function(){
-          checkCollName();
-        });
-        $('#newCollName').on('focusout',function(){
-          checkCollName();
-          if($(this).val() === ""){
-            clearInterval(collNameThread);
-            $(this).parent().removeClass('has-success');
-            $(this).parent().addClass('has-error');
-          }
-        });
-        $('#submitNewColl').on('click',function(){
-          if($('#newCollName').parent().hasClass('has-error') || $('#newCollName').val() == ""){
-            $('#newCollName').parent().removeClass('has-success');
-            $('#newCollName').parent().addClass('has-error');
-          }else{
-            $.ajax({
-              type: 'get',
-              url: '/addCollection',
-              data : {user_id:<%=session.loginUserId%>,collName:$('#newCollName').val(),collDesc:$('#newCollDesc').val()},
-              success: function(result){
-                uploadFile('#newCollPic','CollPic');
-              }
-            });
-          }
-        });
+          <% include comp/submitNewColl.ejs%>
         <%break;
       }%>
   <%}%>

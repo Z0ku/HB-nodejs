@@ -16,5 +16,5 @@ $(document).ready(function(){
         },200);
     }
     function clearError(elem){
-        $(".error").html("");
+        $(elem).html("");
     }

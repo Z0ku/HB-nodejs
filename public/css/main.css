@@ -28,7 +28,7 @@ body{
   border-width: medium !important;
 }
 .has-success .form-control{
-border-width: medium !important; 
+border-width: medium !important;
 }
 .separator{
   border-left: 2px solid rgba(132, 117, 119, 1);
@@ -89,7 +89,15 @@ border-width: medium !important;
   border-radius: 25px;
   border: 4px solid white;
 }
-
+.collCont{
+  margin-top: 20px;
+}
+.collPic{
+  height: 150px;
+}
+.collCont h4,p{
+  margin-top: 20px;
+}
 img{
    width: 100% !important;
 }

@@ -1,0 +1,68 @@
+$('.startColl').on('click',function(){
+  $('.newCollForm').slideToggle();
+});
+$('#editNewCollPic').on('click',function(){
+  $('#newCollPic').click();
+});
+$('#newCollPic').change(function(){
+  previewFile(this,'.preview');
+});
+var collNameThread;
+function checkCollName(){
+  clearInterval(collNameThread);
+  collNameThread = setTimeout(function(){
+    $.ajax({
+      type:'get',
+      url:'/checkCollElem',
+      data:{user_id:<%=user.id%>,collName:$('#newCollName').val()},
+      success:function(result){
+        if(result == 'success'){
+          showError('You Have a Collection With That Name',$('.error'));
+          $('#newCollName').parent().removeClass('has-success');
+          $('#newCollName').parent().addClass('has-error');
+        }else{
+          clearError($('.error'));
+          $('#newCollName').parent().removeClass('has-error');
+          $('#newCollName').parent().addClass('has-success');
+        }
+      }
+    });
+  },2000);
+}
+$('#newCollName').on('keypress',function(){
+  checkCollName();
+});
+$('#newCollName').on('focusout',function(){
+  checkCollName();
+  if($(this).val() === ""){
+    clearInterval(collNameThread);
+    clearError($('.error'));
+    $(this).parent().removeClass('has-success');
+    $(this).parent().addClass('has-error');
+  }
+});
+$('#submitNewColl').on('click',function(e){
+  if($('#newCollName').parent().hasClass('has-error') || $('#newCollName').val() == ""){
+    clearError($('.error'));
+    $('#newCollName').parent().removeClass('has-success');
+    $('#newCollName').parent().addClass('has-error');
+
+  }else{
+    var formData = new FormData();
+    formData.append('user_id','<%=session.loginUserId%>');
+    formData.append('collName', $('#newCollName').val().toString());
+    formData.append('collDesc', $('#newCollDesc').val().toString());
+    // Main magic with files here
+    formData.append('image', $('#newCollPic')[0].files[0]);
+    $.ajax({
+        url: '/addCollection',
+        data: formData,
+        type: 'POST',
+        // THIS MUST BE DONE FOR FILE UPLOADING
+        contentType: false,
+        processData: false
+        // ... Other options like success and etc
+    })
+    $('#newCollName').val("");
+  }
+});

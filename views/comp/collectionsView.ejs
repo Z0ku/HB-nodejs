@@ -1,3 +1,18 @@
 <%if(user.name == session.loginUser){%>
   <% include newCollForm.ejs %>
 <%}%>
+<%for(var i = 0; i < colls.length;i++){
+  var C = colls[i];
+  %>
+  <a href='collections/<%=C.collName.replace(' ','_')%>' class='collLink'>
+    <div class='col-md-3 text-center collCont'>
+      <div class='row'>
+        <div class='col-md-12'>
+          <img src='/img/collection_pics/<%=C.coll_id%>' class='collPic'>
+        </div>
+        <h4><%=C.collName%></h4>
+        <p><%=C.collDesc%></p>
+      </div>
+    </div>
+  </a>
+<%}%>
