@@ -143,6 +143,11 @@ function insertFull(query,table,res,callback){
      }
   });
 }
+String.prototype.replaceAll = function(search, replacement) {
+var target = this;
+return target.split(search).join(replacement);
+};
+
 function loginUser(username,userId,session){
   session.loginUser = username;
   session.loginUserId = userId;
@@ -190,34 +195,44 @@ app.get('/logout',function(req,res){
   req.session.destroy();
   res.redirect('/login');
 });
-app.get('/users/:name',function(req,res){
-  var user = {username:req.params.name};
-  getQueryData(user,"users",'user_id',res,function(data){
-    res.render('profile',{session:req.session,tab:0,user:{name:user.username,id:data[0].user_id}});
+app.get('/users/:id',function(req,res){
+  var user = {user_id:req.params.id};
+  getQueryData(user,"users",'user_id,username',res,function(data){
+    res.render('profile',{session:req.session,tab:0,user:{name:data[0].username,id:data[0].user_id}});
   });
 });
-app.get('/users/:name/collections',function(req,res){
-  var user = {username:req.params.name};
-  getQueryData(user,'users','user_id',res,function(data){
-    if(data[0].user_id){
-      getQueryData({user_id:data[0].user_id},"collections","*",res,function(collection){
-        console.log(collection[0]);
-        res.render('profile',{session:req.session,tab:1,user:{name:user.username,id:data[0].user_id},colls:collection});
+app.get('/users/:id/collections',function(req,res){
+  var user = {user_id:req.params.id};
+  getQueryData(user,'users','user_id,username',res,function(data){
+    if(data){
+      pool.getConnection(function(err,connection){
+         if(!err){
+           console.log('connected as id ' + connection.threadId);
+           var Q = "SELECT collections.*,count(items.item_id) as itemCount FROM collections "+
+                   "LEFT JOIN items ON collections.coll_id = items.coll_id "+
+                   "WHERE collections.user_id="+connection.escape(data[0].user_id)+" "+
+                   "GROUP BY collections.coll_id";
+           connection.query(Q,function(err,collection){
+               connection.release();
+               if(err){
+                 res.send('Error Connecting to DataBase')
+               }else{
+                 res.render('profile',{session:req.session,tab:1,user:{name:data[0].username,id:data[0].user_id},colls:collection});
+               }
+             });
+         }else{
+           console.log(err);
+           res.send('Error Connecting to DataBase');
+         }
       });
     }
   });
 });
+app.get('/collection/:collId',function(req,res){
+  res.send(req.params.collId);
+});
 app.get('/checkElem',function(req,res){
    exists(req.query,"users",res,function(data){
-     if(data){
-       res.send('success');
-     }else{
-       res.send('fail');
-     }
-   });
-});
-app.get('/checkCollElem',function(req,res){
-   exists(req.query,"collections",res,function(data){
      if(data){
        res.send('success');
      }else{
@@ -243,9 +258,7 @@ app.post('/uploadProfilePic',function (req, res){
 app.post('/uploadBackPic',function (req, res){
   uploadFile(req,res,'/img/background_pics/',req.session.loginUserId);
 });
-app.post('/uploadCollPic',function (req, res){
-  uploadFile(req,res,'/img/collection_pics/',req.session.loginUserId);
-});
+
 app.post('/addCollection',function (req, res){
   var D = new Date();
   var curr_date = ""+D.getFullYear()+"-"+D.getMonth()+"-"+D.getDate();
@@ -260,8 +273,15 @@ app.post('/addCollection',function (req, res){
                    };
       insertFull(newColl,'collections',res,function(data){
         if(data){
-          getQueryData({user_id:newColl.user_id,collName:newColl.collName},'collections','coll_id',res,function(newColl){
-              fs.rename(files.image.path, path.join(form.uploadDir,newColl[0].coll_id.toString()));
+          getQueryData({user_id:newColl.user_id},'collections','MAX(coll_id) as collId',res,function(newCollId){
+              if(files.image){
+                fs.rename(files['image'].path, path.join(form.uploadDir,newCollId[0].collId.toString()));
+              }
+              if(files['bg-image']){
+                form.uploadDir = path.join(__dirname, '/public/img/collectionBack_pics/');
+                fs.rename(files['bg-image'].path, path.join(form.uploadDir,newCollId[0].collId.toString()));
+              }
+              res.send(newCollId[0].collId.toString());
           });
         }
       });

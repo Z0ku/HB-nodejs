@@ -4,6 +4,14 @@ $('.showEdits').on('click',function(){
 $('#editProfilePic').on("click",function(){
   $('#newProfPic').click();
 });
+$('#editBackPic').on("click",function(){
+  $('#newBackPic').click();
+});
 $('#newProfPic').change(function(){
-  uploadPic('#newProfPic','.profilePic','profilePic',<%=user.id%>);
+  uploadPic('#newProfPic','.profilePic','profilePic',<%=user.id%>,'profile_pics');
+  $('.editBtn').toggle();
+});
+$('#newBackPic').change(function(){
+  upload('#newBackPic','BackPic');
+    window.location.href=window.location.href;
 });

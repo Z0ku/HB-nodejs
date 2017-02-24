@@ -4,14 +4,17 @@
 <%for(var i = 0; i < colls.length;i++){
   var C = colls[i];
   %>
-  <a href='collections/<%=C.collName.replace(' ','_')%>' class='collLink'>
-    <div class='col-md-3 text-center collCont'>
+  <a href='/collection/<%=C.coll_id%>' class='collLink'>
+    <div class='col-md-12 text-left collCont'>
       <div class='row'>
-        <div class='col-md-12'>
-          <img src='/img/collection_pics/<%=C.coll_id%>' class='collPic'>
+        <div class='col-md-3 collPic'>
+          <img src='/img/collection_pics/<%=C.coll_id%>' onerror="this.src='/img/collection_pics/default.png'">
         </div>
-        <h4><%=C.collName%></h4>
-        <p><%=C.collDesc%></p>
+        <div class='col-md-9' style='background:url("/img/collectionBack_pics/<%=C.coll_id%>"),url("/img/collectionBack_pics/default.jpg")'>
+          <h4><%=C.collName%></h4>
+          <p><%=C.collDesc%></p>
+          <p>Item Count: <%=C.itemCount%></p>
+        </div>
       </div>
     </div>
   </a>

@@ -1,30 +1,51 @@
-<div class='col-md-12'>
-  <div class='row  newCollForm'>
-    <div class='col-md-6'>
-      <form id='collForm'>
-        <div class="form-group">
-          <label for="newCollName">Collection Name</label>
-          <input type="text" class="form-control" id="newCollName" name='collName'>
-          <h4 class='error'></h4>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+  Start New Collection
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add Collection</h4>
+      </div>
+      <div class="modal-body">
+        <div class='row  newCollForm'>
+          <div class='col-md-6'>
+            <div class="form-group">
+              <label for="newCollName">Collection Name</label>
+              <input type="text" class="form-control newCollInput" id="newCollName" name='collName'>
+            </div>
+            <div class="form-group">
+              <label for="newCollDesc">Collection Description (optional)</label>
+              <textarea class="form-control newCollInput" id="newCollDesc" name='collDesc'></textarea>
+            </div>
+            <div class='form-group'>
+              <button type='button' class='btn btn-primary' id='editNewCollPic'>Upload Collection Pic</button>
+              <button type='button' class='btn btn-primary' id='editNewCollBackPic'>Upload Collection Background Pic</button>
+              <input type='file' id='newCollPic' style='visibility:hidden' name="collPic" class='newCollInput'>
+              <input type='file' id='newCollPicBack' style='visibility:hidden' class='newCollInput'>
+
+            </div>
+          </div>
+          <div class='col-md-6'>
+            <div class='row'>
+              <div class='col-md-8 col-md-offset-2'>
+                <img class='preview' src='/img/collection_pics/default.png'>
+              </div>
+            </div>
+          </div>
+          <div class='col-md-12'>
+            <img class='previewBack' src='/img/collectionBack_pics/default.jpg'>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="newCollDesc">Collection Description (optional)</label>
-          <textarea class="form-control" id="newCollDesc" name='collDesc'></textarea>
-        </div>
-        <div class='form-group'>
-          <button type='button' class='btn btn-primary' id='editNewCollPic'>Upload Collection Pic</button>
-          <input type='file' id='newCollPic' style='visibility:hidden' name="collPic">
-          <button type='button' class='btn btn-success' id='submitNewColl'>Make New Collection</button>
-        </div>
-    </form>
-    </div>
-    <div class='col-md-6'>
-      <div class='row'>
-        <div class='col-md-8 col-md-offset-2'>
-          <img class='preview' src='/img/collection_pics/default.png'>
-        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-success btn-lg' id='submitNewColl'>Make New Collection</button>
       </div>
     </div>
   </div>
-  <button class='btn btn-primary startColl'>Start New Collection</div>
 </div>

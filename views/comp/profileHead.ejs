@@ -1,4 +1,4 @@
-<div class='col-md-12 profileBack' style="background:url('/img/background_pics/default.jpeg')">
+<div class='col-md-12 profileBack'>
   <div class='row profileHead'>
     <div class='col-md-10 col-md-offset-1 profileCont'>
       <div class='col-md-3 profilePicCont profilePicCont'>
@@ -8,13 +8,14 @@
       <% if(user.name == session.loginUser){%>
         <button type='button' class='btn btn-primary editBtn' id='editProfilePic'>Edit</button>
         <input type='file' id='newProfPic'>
-
+        <input type='file' id='newBackPic' style='visibility:hidden'>
       <%}%>
       </div>
       <div class='col-md-9 profileNav'>
         <h1><%=user.name%>
           <% if(user.name == session.loginUser){%>
             <button type='button' class='btn btn-primary showEdits'>Edit</button>
+            <button type='button' class='btn btn-primary editBtn' id='editBackPic'>Edit</button>
           <% }else{%>
             <button type='button' class='btn btn-success'>Add Friend</button>
           <%}%>
@@ -23,8 +24,8 @@
         <p>User Description</p>
         <div class='profileNavTabs'>
           <ul class="nav nav-tabs">
-            <li role="presentation" ><a href="/users/<%=user.name%>">Feed</a></li>
-            <li role="presentation" ><a href="/users/<%=user.name%>/collections">Collections</a></li>
+            <li role="presentation" ><a href="/users/<%=user.id%>">Feed</a></li>
+            <li role="presentation" ><a href="/users/<%=user.id%>/collections">Collections</a></li>
             <li role="presentation" ><a href="#">Trades</a></li>
             <li role="presentation"><a href="#">Friends</a></li>
           </ul>

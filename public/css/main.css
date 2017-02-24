@@ -17,11 +17,17 @@ input,textarea{
 }
 body{
     background: rgba(251, 251, 242, 1);
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: fixed;
     color: rgba(132, 117, 119, 1);
     font-family: righteous !important;
 }
 .newCollForm{
-  display: none;
   margin-bottom: 20px;
 }
 .has-error .form-control{
@@ -35,7 +41,7 @@ border-width: medium !important;
   border-right: 2px solid rgba(132, 117, 119, 1);
 }
 .profileBack{
-  background-size: 100% 100% !important;
+
   height:400px;
 }
 .editBtn{
@@ -47,6 +53,7 @@ border-width: medium !important;
 .profileHead{
   position: relative;
   height: inherit;
+  border-bottom: 2px solid rgba(132, 117, 119, 1);
   color: rgba(251, 251, 242, 1);
 }
 .nav-tabs > li.active > a{
@@ -54,6 +61,12 @@ border-width: medium !important;
 }
 .profilePicCont{
   position: relative;
+}
+.previewBack{
+  height:250px;
+}
+.preview{
+  height: 250px;
 }
 #editProfilePic{
   position: absolute;
@@ -91,9 +104,20 @@ border-width: medium !important;
 }
 .collCont{
   margin-top: 20px;
+  height: 200px;
+  border: 5px solid rgba(132, 117, 119, 1);
+  border-radius: 70px;
+  overflow: hidden;
+}
+.collCont div{
+  height: inherit;
 }
 .collPic{
-  height: 150px;
+  padding: 0px;
+  height: auto;
+}
+.collPic img{
+  height: inherit;
 }
 .collCont h4,p{
   margin-top: 20px;

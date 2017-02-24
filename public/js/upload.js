@@ -13,7 +13,7 @@ function upload(input,type){
     }
   });
 }
-function uploadPic(input,img,type,id){
+function uploadPic(input,img,type,id,fold){
   var files = $(input).get(0).files;
   var formData = new FormData();
   formData.append('newPic',files[0],files[0].name);
@@ -25,7 +25,22 @@ function uploadPic(input,img,type,id){
     contentType: false,
     success: function(data){
         console.log('upload successful!');
-        $(img).prop('src', '/img/profile_pics/'+id+ '?' + Math.random());
+        $(img).prop('src', '/img/'+fold+'/'+id+ '?' + Math.random());
+    }
+  });
+}
+function uploadBackPic(input,type,id,fold){
+  var files = $(input).get(0).files;
+  var formData = new FormData();
+  formData.append('newPic',files[0],files[0].name);
+  $.ajax({
+    url: '/upload'+type,
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function(data){
+        console.log('upload successful!');
     }
   });
 }
