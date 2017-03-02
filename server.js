@@ -164,16 +164,18 @@ function insertFull(query,table,res,callback){
      if(!err){
        console.log('connected as id ' + connection.threadId);
        var vals = makeValues(query,connection);
-       connection.query("INSERT INTO "+table+" VALUES"+vals,function(err){
+       connection.query("INSERT INTO "+table+" VALUES"+vals,function(err,result){
            connection.release();
            if(err){
+             console.log(err);
              return callback(false);
            }else{
-             return callback(true);
+             return callback(result);
            }
          });
      }else{
        console.log(err);
+       return callback(false);
      }
   });
 }
@@ -187,7 +189,7 @@ function loginUser(username,userId,session){
   session.loginUserId = userId;
   session.save();
 }
-function uploadFile(req,res,filePath,filename){
+function uploadFile(req,res,filePath){
   var form = new formidable.IncomingForm();
   // specify that we want to allow the user to upload multiple files in a single request
   form.multiples = true;
@@ -196,7 +198,7 @@ function uploadFile(req,res,filePath,filename){
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
   form.on('file', function(field, file) {
-  fs.rename(file.path, path.join(form.uploadDir,filename.toString()));
+  fs.rename(file.path, path.join(form.uploadDir,field));
   });
 
   // log any errors that occur
@@ -258,7 +260,11 @@ app.get('/collection/:collId',function(req,res){
   var collId = parseInt(req.params.collId);
   getQueryDataJoin(query,"WHERE collections.coll_id="+collId,'collections','collections.*,users.username,users.user_id'
   ,function(data){
-    res.render('collection',{session:req.session,collId:collId,collData:data[0]});
+    if(data){
+      getQueryData({coll_id:req.params.collId},"items","*",res,function(items){
+        res.render('collection',{session:req.session,collId:collId,collData:data[0],I:items});        
+      })
+    }
   })
 });
 app.get('/checkElem',function(req,res){
@@ -283,10 +289,16 @@ app.get('/confirmUser',function(req,res){
   });
 });
 app.post('/uploadProfilePic',function (req, res){
-  uploadFile(req,res,'/img/profile_pics/',req.session.loginUserId);
+  uploadFile(req,res,'/img/profile_pics/');
 });
 app.post('/uploadBackPic',function (req, res){
-  uploadFile(req,res,'/img/background_pics/',req.session.loginUserId);
+  uploadFile(req,res,'/img/background_pics/');
+});
+app.post('/uploadCollPic',function (req, res){
+  uploadFile(req,res,'/img/background_pics/');
+});
+app.post('/uploadCollBackPic',function (req, res){
+  uploadFile(req,res,'/img/background_pics/');
 });
 
 app.post('/addCollection',function (req, res){
@@ -303,16 +315,14 @@ app.post('/addCollection',function (req, res){
                    };
       insertFull(newColl,'collections',res,function(data){
         if(data){
-          getQueryData({user_id:newColl.user_id},'collections','MAX(coll_id) as collId',res,function(newCollId){
-              if(files.image){
-                fs.rename(files['image'].path, path.join(form.uploadDir,newCollId[0].collId.toString()));
-              }
-              if(files['bg-image']){
-                form.uploadDir = path.join(__dirname, '/public/img/collectionBack_pics/');
-                fs.rename(files['bg-image'].path, path.join(form.uploadDir,newCollId[0].collId.toString()));
-              }
-              res.send(newCollId[0].collId.toString());
-          });
+          if(files.image){
+            fs.rename(files['image'].path, path.join(form.uploadDir,data.insertId.toString()));
+          }
+          if(files['bg-image']){
+            form.uploadDir = path.join(__dirname, '/public/img/collectionBack_pics/');
+            fs.rename(files['bg-image'].path, path.join(form.uploadDir,data.insertId.toString()));
+          }
+          res.send(data.insertId.toString());
         }
       });
     });
@@ -321,6 +331,14 @@ app.post('/addItem',function(req,res){
   var form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files){
     console.log(fields);
+    insertFull(fields,'items',res,function(data){
+      if(data){
+        form.uploadDir = path.join(__dirname, '/public/img/item_pics/');
+        if(files['itemPic']){
+          fs.rename(files['itemPic'].path, path.join(form.uploadDir,data.insertId.toString()));
+        }
+      }
+    });
   });
 });
 app.get('/registerUser',function(req,res){

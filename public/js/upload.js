@@ -16,7 +16,7 @@ function upload(input,type){
 function uploadPic(input,img,type,id,fold){
   var files = $(input).get(0).files;
   var formData = new FormData();
-  formData.append('newPic',files[0],files[0].name);
+  formData.append(''+id,files[0],files[0].name);
   $.ajax({
     url: '/upload'+type,
     type: 'POST',
@@ -29,10 +29,10 @@ function uploadPic(input,img,type,id,fold){
     }
   });
 }
-function uploadBackPic(input,type,id,fold){
+function uploadBackPic(input,type,id){
   var files = $(input).get(0).files;
   var formData = new FormData();
-  formData.append('newPic',files[0],files[0].name);
+  formData.append(''+id,files[0],files[0].name);
   $.ajax({
     url: '/upload'+type,
     type: 'POST',
@@ -43,6 +43,7 @@ function uploadBackPic(input,type,id,fold){
         console.log('upload successful!');
     }
   });
+  window.location.href=window.location.href;
 }
 function previewFile(input,target) {
     if (input.files && input.files[0]) {

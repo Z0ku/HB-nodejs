@@ -12,6 +12,5 @@ $('#newProfPic').change(function(){
   $('.editBtn').toggle();
 });
 $('#newBackPic').change(function(){
-  upload('#newBackPic','BackPic');
-    window.location.href=window.location.href;
+  uploadBackPic('#newBackPic','BackPic',<%=user.id%>);
 });

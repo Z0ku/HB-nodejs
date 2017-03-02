@@ -23,6 +23,9 @@ a{
 a:hover{
   color:#120907;
 }
+p{
+  color: #847577 !important;
+}
 .newCollForm{
   margin-bottom: 20px;
 }
@@ -55,10 +58,7 @@ input,textarea{
   height: inherit;
   border-bottom: 2px solid #a6a2a2;
   color: #cfd2cd;
-}
-.profileHead h1,p{
-    text-shadow: 2px 2px 2px #222;
-}
+} 
 .nav-tabs > li.active > a{
   color: #a6a2a2;
 }
@@ -160,11 +160,17 @@ img{
   border: 5px solid #847577;
   box-shadow: 7px 7px 5px #222;
 }
+.itemPic{
+  padding: 0px;
+}
+.itemPic img{
+  height: 200px;
+}
 .modal .form-inline input{
-  width:85px;
+  width:130px;
 }
 .modal .form-inline select{
-  width:125px;
+  width:130px;
 }
 .ownerPic img{
   height: inherit;
