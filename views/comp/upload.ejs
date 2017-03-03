@@ -1,0 +1,8 @@
+<script>
+  $('.picChange').change(function(){
+    uploadPic($(this),$(this).parent().siblings('img'),$(this).attr('name'));
+  });
+  $('.backPicChange').change(function(){
+    uploadBackPic($(this),$(this).attr('name'));
+  });
+</script>

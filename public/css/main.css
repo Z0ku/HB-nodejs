@@ -17,6 +17,23 @@ body{
     font-family: righteous !important;
     font-weight: bolder;
 }
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: none;
+    position: absolute;
+    top:5%;
+    z-index: 100;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 a{
   color:#292423;
 }
@@ -58,7 +75,7 @@ input,textarea{
   height: inherit;
   border-bottom: 2px solid #a6a2a2;
   color: #cfd2cd;
-} 
+}
 .nav-tabs > li.active > a{
   color: #a6a2a2;
 }
@@ -96,6 +113,9 @@ input,textarea{
   position: absolute;
   bottom: -1px;
 }
+img{
+  height: inherit;
+}
 .nav-tabs{
   border: none;
 }
@@ -132,14 +152,27 @@ input,textarea{
 }
 .collHeadPic{
   height: 150px;
-  overflow: hidden;
   border: 5px solid #847577;
   box-shadow: 7px 7px 5px #222;
   padding: 0px;
   margin-bottom: 25px;
+  position: relative;
 }
 .collHeadPic img{
   height: inherit;
+}
+.collData{
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #847577;
+}
+.newCollDesc{
+  border-radius: 0px !important;
+  width: 300px;
+  color: #847577;
+}
+.collDesc{
+  color: #847577;
 }
 img{
    width: 100% !important;
@@ -190,6 +223,37 @@ img{
   height:250px;
   padding-left: 50px;
   padding-right: 50px;
+}
+.hasEdit{
+  position: relative;
+  overflow: hidden;
+}
+.editBackPic{
+  background-color: transparent !important;
+}
+.editBackPic .btn{
+  top:5% !important;
+  left: 5% !important;
+  z-index: 99;
+}
+.editPic{
+  height: 100%;
+  width: 100%;
+  background-color: hsla(352, 6%, 49%, 0.75);
+  position:absolute;
+  display: none;
+  top:0;
+  left: 0;
+}
+
+.editPic .btn{
+  background-color: hsla(352, 6%, 49%, 0.75);
+  border-color: white;
+  position:relative;
+  top:45%;
+}
+.editPic .btn:active{
+  border-color: inherit;
 }
 .error{
     font-size:17px;

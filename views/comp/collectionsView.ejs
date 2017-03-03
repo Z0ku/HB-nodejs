@@ -1,6 +1,7 @@
 <%if(user.name == session.loginUser){%>
   <% include newCollForm.ejs %>
 <%}%>
+
 <%for(var i = 0; i < colls.length;i++){
   var C = colls[i];
   %>

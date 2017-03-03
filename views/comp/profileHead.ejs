@@ -1,22 +1,24 @@
-<div class='col-md-12 profileBack'>
+<div class='col-md-12 profileBack hasEdit'>
+  <% if(user.name == session.loginUser){%>
+    <div class='editPic editBackPic'>
+      <button class='btn btn-primary'>Edit Cover Photo</button>
+      <input class='backPicChange' type='file' style='visibility:hidden' name='/img/background_pics/<%=session.loginUserId%>'>
+    </div>
+  <%}%>
   <div class='row profileHead'>
     <div class='col-md-10 col-md-offset-1 profileCont'>
-      <div class='col-md-3 profilePicCont profilePicCont'>
-        <a href='#'>
-          <img src='/img/profile_pics/<%=user.id%>' onerror="this.src='/img/profile_pics/default.jpg'" class='profilePic'>
-        </a>
+      <div class='col-md-3 profilePic hasEdit'>
+        <img src='/img/profile_pics/<%=user.id%>' onerror="this.src='/img/profile_pics/default.jpg'">
       <% if(user.name == session.loginUser){%>
-        <button type='button' class='btn btn-primary editBtn' id='editProfilePic'>Change</button>
-        <input type='file' id='newProfPic'>
-        <input type='file' id='newBackPic' style='visibility:hidden'>
+        <div class='editPic text-center'>
+          <button class='btn btn-primary'>Edit</button>
+          <input class='picChange' type='file' style='visibility:hidden' name='/img/profile_pics/<%=session.loginUserId%>'>
+        </div>
       <%}%>
       </div>
-      <div class='col-md-9 profileNav'>
+     <div class='col-md-9 profileNav'>
         <h1><%=user.name%>
-          <% if(user.name == session.loginUser){%>
-            <button type='button' class='btn btn-primary showEdits'>Edit</button>
-            <button type='button' class='btn btn-primary editBtn' id='editBackPic'>Change Cover Photo</button>
-          <% }else{%>
+          <% if(user.name !== session.loginUser){%>
             <button type='button' class='btn btn-success'>Add Friend</button>
           <%}%>
         </h1>
@@ -31,5 +33,6 @@
           </ul>
         </div>
     </div>
+  </div>
   </div>
 </div>

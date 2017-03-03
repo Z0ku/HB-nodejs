@@ -18,6 +18,13 @@ var options = {
 };
 
 var sessionStore = new MySQLStore(options);
+app.locals.itemConds = {
+        Good: 'primary',
+        Mint: 'success',
+        Acceptable : 'warning',
+        Worn : 'danger'
+    };
+
 
 app.use(session({
   store:sessionStore,
@@ -189,12 +196,12 @@ function loginUser(username,userId,session){
   session.loginUserId = userId;
   session.save();
 }
-function uploadFile(req,res,filePath){
+function uploadFile(req,res){
   var form = new formidable.IncomingForm();
   // specify that we want to allow the user to upload multiple files in a single request
   form.multiples = true;
   // store all uploads in the /uploads directory
-  form.uploadDir = path.join(__dirname, '/public'+filePath);
+  form.uploadDir = path.join(__dirname, '/public');
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
   form.on('file', function(field, file) {
@@ -229,7 +236,6 @@ app.get('/register', function(req, res){
 });
 app.get('/logout',function(req,res){
   req.session.destroy();
-  res.redirect('/login');
 });
 app.get('/users/:id',function(req,res){
   var user = {user_id:req.params.id};
@@ -261,8 +267,8 @@ app.get('/collection/:collId',function(req,res){
   getQueryDataJoin(query,"WHERE collections.coll_id="+collId,'collections','collections.*,users.username,users.user_id'
   ,function(data){
     if(data){
-      getQueryData({coll_id:req.params.collId},"items","*",res,function(items){
-        res.render('collection',{session:req.session,collId:collId,collData:data[0],I:items});        
+      getQueryData({coll_id:req.params.collId,itemStatus:'Active'},"items","*",res,function(items){
+        res.render('collection',{session:req.session,collId:collId,collData:data[0],I:items});
       })
     }
   })
@@ -288,19 +294,9 @@ app.get('/confirmUser',function(req,res){
     }
   });
 });
-app.post('/uploadProfilePic',function (req, res){
-  uploadFile(req,res,'/img/profile_pics/');
+app.post('/upload',function (req, res){
+  uploadFile(req,res);
 });
-app.post('/uploadBackPic',function (req, res){
-  uploadFile(req,res,'/img/background_pics/');
-});
-app.post('/uploadCollPic',function (req, res){
-  uploadFile(req,res,'/img/background_pics/');
-});
-app.post('/uploadCollBackPic',function (req, res){
-  uploadFile(req,res,'/img/background_pics/');
-});
-
 app.post('/addCollection',function (req, res){
   var D = new Date();
   var curr_date = ""+D.getFullYear()+"-"+D.getMonth()+"-"+D.getDate();

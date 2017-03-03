@@ -21,7 +21,7 @@
       <ul class="nav navbar-nav navbar-right">
         <% if(session.loginUser){%>
           <li><a href="/users/<%=session.loginUserId%>"><%=session.loginUser%></a></li>
-          <li><a href="/logout">Logout</a></li>
+          <li><a href="#" onclick="logout()">Logout</a></li>
         <%}else{%>
           <li><a href="/login">Login</a></li>
           <li><a href="/register">Register</a></li>
@@ -30,3 +30,4 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+<div class='loader text-center'></div>

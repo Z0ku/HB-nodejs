@@ -13,37 +13,37 @@ function upload(input,type){
     }
   });
 }
-function uploadPic(input,img,type,id,fold){
+function uploadPic(input,img,id){
   var files = $(input).get(0).files;
   var formData = new FormData();
-  formData.append(''+id,files[0],files[0].name);
+  formData.append(id,files[0],files[0].name);
   $.ajax({
-    url: '/upload'+type,
+    url: '/upload',
     type: 'POST',
     data: formData,
     processData: false,
     contentType: false,
     success: function(data){
         console.log('upload successful!');
-        $(img).prop('src', '/img/'+fold+'/'+id+ '?' + Math.random());
+        $(img).prop('src', id+ '?' + Math.random());
     }
   });
 }
-function uploadBackPic(input,type,id){
+function uploadBackPic(input,id){
   var files = $(input).get(0).files;
   var formData = new FormData();
   formData.append(''+id,files[0],files[0].name);
   $.ajax({
-    url: '/upload'+type,
+    url: '/upload',
     type: 'POST',
     data: formData,
     processData: false,
     contentType: false,
     success: function(data){
         console.log('upload successful!');
+        window.location.reload();
     }
   });
-  window.location.href=window.location.href;
 }
 function previewFile(input,target) {
     if (input.files && input.files[0]) {

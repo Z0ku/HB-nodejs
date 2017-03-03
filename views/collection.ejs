@@ -16,22 +16,43 @@
 <body>
   <% include comp/nav.ejs %>
   <% include comp/collectionHead.ejs %>
-  <div class='col-md-10 col-md-offset-1' style='padding-top:50px'>
+  <div class='col-md-10 col-md-offset-1' style='padding-top:20px'>
+    <div class='row collData'>
+      <h5 class='lead'>
+        Description:
+        <%if(collData.user_id == session.loginUserId){%>
+          <button class='editCollDesc btn btn-success btn-sm text-left'>Edit</button>
+        <%}%>
+      </h5>
+      <p class='collDesc'><%=collData.collId%></p>
+    </div>
     <% include comp/itemsView.ejs %>
   </div>
 </body>
 </html>
   <% include comp/jslinks.ejs %>
 <% if(collData.user_id == session.loginUserId){%>
-  <% include comp/uploadFunctions.ejs%>
+  <script type='text/javascript' src='/js/upload.js'></script>
+  <% include comp/upload.ejs%>
 <%}%>
 <script>
   <%if(collData.user_id == session.loginUserId){%>
+     var collDesc = $('.collDesc').clone();
+     var editFlag = 0;
       $('#editNewItemPic').on('click',function(){
         $('#newItemPic').click();
       });
       $('#newItemPic').change(function(){
         previewFile(this,'#newItemPreview');
+      });
+      $('.editCollDesc').on('click',function(){
+        if(editFlag !== 1){
+          $('.collDesc').remove();
+          $('.collData').append("<textarea class='newCollDesc'>"+$(collDesc).html()+"</textarea></br>"
+                                +"<button class='cancelEdit btn btn-default'>Cancel</button>"
+                                +"<button class='submitEdit btn btn-default'>Submit</button>");
+          editFlag = 1;
+        }
       });
       $('#submitNewItem').on('click',function(){
         var Q = parseInt($('#newItemQuant').val());
@@ -46,7 +67,6 @@
         formData.append('itemCondition',$('#newItemCond').val());
         formData.append('quantity',Q);
         formData.append('tradeStatus',$('#newTradeOpt').val());
-        formData.append('tradeDetails',$('#newTradeDesc').val());
         formData.append('tradePrice',P);
         var D = new Date();
         var curr_date = ""+D.getFullYear()+"-"+D.getMonth()+"-"+D.getDate();
@@ -60,6 +80,8 @@
           contentType : false,
           processData : false
         });
+        window.location.href = window.location.href;
       });
+
   <%}%>
 </script>
