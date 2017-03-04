@@ -13,9 +13,11 @@ and open the template in the editor.
     src: url("../fonts/Junction-regular.otf");
 }
 body{
-    color: #cfd2cd;
     font-family: righteous !important;
     font-weight: bolder;
+}
+.pre{
+  white-space:pre;
 }
 .loader {
     border: 16px solid #f3f3f3; /* Light grey */
@@ -149,6 +151,7 @@ img{
   padding-top: 50px;
   padding-bottom: 25px;
   text-shadow: 2px 2px 3px #222;
+  color:#fbfbf2;
 }
 .collHeadPic{
   height: 150px;
@@ -168,8 +171,20 @@ img{
 }
 .newCollDesc{
   border-radius: 0px !important;
-  width: 300px;
   color: #847577;
+}
+
+.itemHeadPic{
+  padding: 0px;
+  height: 375px;
+}
+.itemHeadPic img{
+  height: inherit;
+}
+.modal-body .itemHeadPic{
+  height: 200px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 .collDesc{
   color: #847577;

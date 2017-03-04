@@ -25,7 +25,6 @@ app.locals.itemConds = {
         Worn : 'danger'
     };
 
-
 app.use(session({
   store:sessionStore,
   secret: 'keyboard cat',
@@ -155,8 +154,10 @@ function getQueryDataJoin(query,cond,table,col,callback){
       connection.query("SELECT "+col+" FROM "+table+""+J+cond,function(err,rows){
         if(err){
           console.log(err);
+          console.log("SELECT "+col+" FROM "+table+""+J+cond);
           return callback(false);
         }else{
+
           return callback(rows);
         }
       });
@@ -172,6 +173,27 @@ function insertFull(query,table,res,callback){
        console.log('connected as id ' + connection.threadId);
        var vals = makeValues(query,connection);
        connection.query("INSERT INTO "+table+" VALUES"+vals,function(err,result){
+           connection.release();
+           if(err){
+             console.log(err);
+             return callback(false);
+           }else{
+             return callback(result);
+           }
+         });
+     }else{
+       console.log(err);
+       return callback(false);
+     }
+  });
+}
+function update(query,table,conds,callback){
+  pool.getConnection(function(err,connection){
+     if(!err){
+       console.log('connected as id ' + connection.threadId);
+       var vals = makeConditions(query,connection);
+       var cond = makeConditions(conds,connection);
+       connection.query("UPDATE "+table+" SET "+vals+" WHERE "+cond,function(err,result){
            connection.release();
            if(err){
              console.log(err);
@@ -247,8 +269,8 @@ app.get('/users/:id/collections',function(req,res){
   var user = {user_id:req.params.id};
   getQueryData(user,'users','user_id,username',res,function(data){
     if(data){
-      var query = {'LEFT JOIN':'items','collections.coll_id':'items.coll_id','JOIN':'users','collections.user_id':data[0].user_id.toString()};
-      getQueryDataJoin(query,"GROUP BY collections.coll_id",'collections','collections.*,count(items.item_id) as itemCount',
+      var query = {'LEFT JOIN':'items','collections.coll_id':'items.coll_id'};
+      getQueryDataJoin(query,"WHERE collections.user_id="+req.params.id+" GROUP BY collections.coll_id",'collections','collections.*,count(items.item_id) as itemCount',
                        function(collection){
         if(collection){
           res.render('profile',{session:req.session,tab:1,user:{name:data[0].username,id:data[0].user_id},colls:collection});
@@ -272,6 +294,16 @@ app.get('/collection/:collId',function(req,res){
       })
     }
   })
+});
+app.get('/item/:id',function(req,res){
+  var item = {'JOIN':'collections','items.coll_id':'collections.coll_id'};
+  getQueryDataJoin(item,"WHERE items.item_id="+req.params.id,"items","items.*,collections.coll_id as cColl_id,collections.collName as cCollName,collections.user_id as user_id",function(data){
+    if(data){
+      getQueryData({user_id:data['user_id']},"users","username",res,function(userData){
+        res.render('item',{session:req.session,itemData:data[0],user:userData[0]});
+      });
+    }
+  });
 });
 app.get('/checkElem',function(req,res){
    exists(req.query,"users",res,function(data){
@@ -298,8 +330,6 @@ app.post('/upload',function (req, res){
   uploadFile(req,res);
 });
 app.post('/addCollection',function (req, res){
-  var D = new Date();
-  var curr_date = ""+D.getFullYear()+"-"+D.getMonth()+"-"+D.getDate();
   var form = new formidable.IncomingForm();
   form.uploadDir = path.join(__dirname, '/public/img/collection_pics/');
   form.parse(req, function(err, fields, files) {
@@ -307,7 +337,7 @@ app.post('/addCollection',function (req, res){
                      user_id:fields.user_id,
                      collName:fields.collName,
                      collDesc:fields.collDesc,
-                     dateStarted:curr_date
+                     dateStarted:''
                    };
       insertFull(newColl,'collections',res,function(data){
         if(data){
@@ -326,7 +356,6 @@ app.post('/addCollection',function (req, res){
 app.post('/addItem',function(req,res){
   var form = new formidable.IncomingForm();
   form.parse(req, function(err, fields, files){
-    console.log(fields);
     insertFull(fields,'items',res,function(data){
       if(data){
         form.uploadDir = path.join(__dirname, '/public/img/item_pics/');
@@ -343,5 +372,22 @@ app.get('/registerUser',function(req,res){
     res.send('success');
   });
 
+});
+app.post('/updateCollDesc',function(req,res){
+  var form = new formidable.IncomingForm();
+  form.parse(req, function(err, fields, files){
+    update({collDesc:fields.collDesc},'collections',{coll_id:fields.coll_id},function(data){
+      if(data){
+        res.send('success');
+      }
+    })
+  });
+});
+app.get('/getItem',function(req,res){
+  getQueryData(req.query,'items','*',res,function(data){
+    if(data){
+      res.json(data[0]);
+    }
+  });
 });
 app.listen(80);

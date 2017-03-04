@@ -1,0 +1,9 @@
+<div class="col-md-12">
+  <%if(itemData.tradeStatus == 'Trading'){%>
+    <button class="btn btn-primary btn-md tradeBtn float-left btn-lg" data-toggle="modal" data-target="#tradeForm" data-id="<%=itemData.item_id%>">Trade</button>
+  <%}%>
+    <div class='btn-group' style='float:right'>
+      <button class="glyphicon glyphicon-thumbs-up float-right btn btn-lg btn-success"></button>
+      <button class="glyphicon glyphicon-thumbs-down float-right btn btn-lg btn-danger"></button>
+    </div>
+</div>

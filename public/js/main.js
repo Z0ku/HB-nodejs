@@ -13,6 +13,10 @@ function logout(){
   });
   window.location.href = window.location.href
 }
+String.prototype.replaceAll = function(search, replacement) {
+  var target = this;
+  return target.split(search).join(replacement);
+};
 $('.loader').bind('ajaxStart', function(){
     $(this).show();
 }).bind('ajaxStop', function(){

@@ -1,0 +1,27 @@
+<div class='row itemHead'>
+  <div class='col-md-5 itemHeadPic hasEdit'>
+    <img src='/img/item_pics/<%=itemData.item_id%>' onerror="this.src='/img/item_pics/default'">
+    <% if(itemData.user_id == session.loginUserId){%>
+      <div class='editPic text-center'>
+        <button class='btn btn-primary'>Edit</button>
+        <input class='picChange' type='file' style='visibility:hidden' name='/img/item_pics/<%=itemData.item_id%>'>
+      </div>
+    <%}%>
+  </div>
+  <div class='col-md-7' >
+    <h1 class='lead'><%=itemData.itemName%></h1>
+    <p class='itemDetail text-left'>
+      <strong>Type: </strong><%=itemData.itemType%></br>
+      <strong>Condition:</strong>
+      <span class='text-<%=itemConds[itemData.itemCondition]%>'><%=itemData.itemCondition%></span></br>
+      <strong>Quantity: </strong><%=itemData.quantity%></br></br>
+    </p>
+    <dl>
+      <dt>Description:</dt>
+      <dd class='pre'></br><%=itemData.itemDesc%></dd>
+    </dl>
+    <% if(itemData.user_id !== session.loginUserId){%>
+      <% include tradeButtons.ejs%>
+    <%}%>
+  </div>
+</div>

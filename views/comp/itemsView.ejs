@@ -10,42 +10,36 @@
 
     <%
       for(var i = 0; i < I.length;i++){
-        item = I[i];
+        itemData = I[i];
     %>
     <div class="item  col-md-3 col-lg-3">
          <div class="thumbnail">
-             <a href='/item/<%=item.item_id%>'>
-               <img class="group list-group-image" src='/img/item_pics/<%=item.item_id%>' onerror="this.src='/img/item_pics/default'" />
+             <a href='/item/<%=itemData.item_id%>'>
+               <img class="group list-group-image" src='/img/item_pics/<%=itemData.item_id%>' onerror="this.src='/img/item_pics/default'" />
              </a>
              <div class="caption">
-                 <a href='/item/<%=item.item_id%>'>
+                 <a href='/item/<%=itemData.item_id%>'>
                    <h4 class="group inner list-group-item-heading">
-                     <%=item.itemName%>
+                     <%=itemData.itemName%>
                    </h4>
                   </a>
                  <p class="group inner list-group-item-text">
-                     <%=item.itemType%></br>
-                     Condition: <span class='text-<%=itemConds[item.itemCondition]%>'><%=item.itemCondition%></span></br>
-                     Qty: <%=item.quantity%>
+                    <%=itemData.itemType%></br>
+                     Condition: <span class='text-<%=itemConds[itemData.itemCondition]%>'><%=itemData.itemCondition%></span></br>
+                     Qty: <%=itemData.quantity%>
                  </p>
                  <div class="row">
                      <div class="col-md-12">
                          <p class="lead">
-                           <%if(item.tradeStatus == 'Trading'){%>
-                              $ <%=(item.tradePrice)?item.tradePrice.toFixed(2).toLocaleString():"N/A"%>
+                           <%if(itemData.tradeStatus == 'Trading'){%>
+                              $ <%=(itemData.tradePrice)?itemData.tradePrice.toFixed(2).toLocaleString():"N/A"%>
                             <%}else{%>
                                N/A
                             <%}%>
                           </p>
                      </div>
                      <%if(session.loginUserId !== collData.user_id){%>
-                     <div class="col-md-12">
-                         <button class="btn btn-primary btn-md tradeBtn float-left">Trade</button>
-                         <div class='btn-group' style='float:right'>
-                           <button class="glyphicon glyphicon-thumbs-up float-right btn btn-success"></button>
-                           <button class="glyphicon glyphicon-thumbs-down float-right btn btn-danger"></button>
-                         </div>
-                     </div>
+                       <% include tradeButtons.ejs%>
                      <%}%>
 
                  </div>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+   <title>HB</title>
+   <% include comp/csslinks.ejs %>
+</head>
+<body>
+  <% include comp/nav.ejs %>
+  <div class='container-fluid' style='margin-top:40px'>
+    <div class='row'>
+      <div class='col-md-10 col-md-offset-1'>
+        <% include comp/itemHead.ejs%>
+      </div>
+    </div>
+  </div>
+  <% if(itemData.user_id !== session.loginUserId){%>
+    <% include comp/tradeForm.ejs%>
+  <%}%>
+</body>
+</html>
+  <% include comp/jslinks.ejs %>
+  <% if(itemData.user_id == session.loginUserId){%>
+    <script type='text/javascript' src='/js/upload.js'></script>
+    <% include comp/upload.ejs%>
+  <%}%>

@@ -1,0 +1,33 @@
+<div class="modal fade" id="tradeForm" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Make Trade</h4>
+      </div>
+      <div class="modal-body">
+        <div class='row itemHead'>
+          <div class='col-md-5 itemHeadPic'>
+            <img src='/img/item_pics/' onerror="this.src='/img/item_pics/default'">
+          </div>
+          <div class='col-md-7' >
+            <h1 class='lead itemName'></h1>
+            <p class='itemDetail text-left'>
+              <strong>Type: </strong><span class='itemType'></span></br>
+              <strong>Condition:</strong><span class='itemCondition'></span></br>
+              <strong>Quantity: </strong><span class='quantity'></br></br>
+            </p>
+            <dl>
+              <dt>Description:</dt>
+              <dd class='pre'></br><span class='itemDesc'></span></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Send Trade Offer</button>
+      </div>
+    </div>
+  </div>
+</div>

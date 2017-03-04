@@ -24,64 +24,24 @@
           <button class='editCollDesc btn btn-success btn-sm text-left'>Edit</button>
         <%}%>
       </h5>
-      <p class='collDesc'><%=collData.collId%></p>
+      <p class='collDesc pre'><%=collData.collDesc%></p>
     </div>
     <% include comp/itemsView.ejs %>
   </div>
+  <% if(itemData.user_id !== session.loginUserId){%>
+    <% include comp/tradeForm.ejs%>
+  <%}%>
 </body>
 </html>
+
   <% include comp/jslinks.ejs %>
+
 <% if(collData.user_id == session.loginUserId){%>
   <script type='text/javascript' src='/js/upload.js'></script>
   <% include comp/upload.ejs%>
 <%}%>
 <script>
   <%if(collData.user_id == session.loginUserId){%>
-     var collDesc = $('.collDesc').clone();
-     var editFlag = 0;
-      $('#editNewItemPic').on('click',function(){
-        $('#newItemPic').click();
-      });
-      $('#newItemPic').change(function(){
-        previewFile(this,'#newItemPreview');
-      });
-      $('.editCollDesc').on('click',function(){
-        if(editFlag !== 1){
-          $('.collDesc').remove();
-          $('.collData').append("<textarea class='newCollDesc'>"+$(collDesc).html()+"</textarea></br>"
-                                +"<button class='cancelEdit btn btn-default'>Cancel</button>"
-                                +"<button class='submitEdit btn btn-default'>Submit</button>");
-          editFlag = 1;
-        }
-      });
-      $('#submitNewItem').on('click',function(){
-        var Q = parseInt($('#newItemQuant').val());
-        var P = parseFloat($('#newTradePrice').val());
-
-        var formData = new FormData();
-        formData.append('item_id','');
-        formData.append('coll_id',<%=collData.coll_id%>);
-        formData.append('itemName',$('#newItemName').val());
-        formData.append('itemType',$('#newItemType').val());
-        formData.append('itemDesc',$('#newItemDesc').val());
-        formData.append('itemCondition',$('#newItemCond').val());
-        formData.append('quantity',Q);
-        formData.append('tradeStatus',$('#newTradeOpt').val());
-        formData.append('tradePrice',P);
-        var D = new Date();
-        var curr_date = ""+D.getFullYear()+"-"+D.getMonth()+"-"+D.getDate();
-        formData.append('dateAdded',curr_date);
-        formData.append('itemStatus','Active');
-        formData.append('itemPic',$('#newItemPic')[0].files[0]);
-        $.ajax({
-          url : '/addItem',
-          type : "POST",
-          data : formData,
-          contentType : false,
-          processData : false
-        });
-        window.location.href = window.location.href;
-      });
-
+     <% include comp/submitItem.ejs%>
   <%}%>
 </script>
