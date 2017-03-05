@@ -6,21 +6,33 @@
         <h4 class="modal-title">Make Trade</h4>
       </div>
       <div class="modal-body">
-        <div class='row itemHead'>
-          <div class='col-md-5 itemHeadPic'>
-            <img src='/img/item_pics/' onerror="this.src='/img/item_pics/default'">
+        <div class='row'>
+          <div class='col-md-5'>
+            <div class='row itemHead'>
+              <div class='col-md-5 itemHeadPic'>
+                <img src='/img/item_pics/' onerror="this.src='/img/item_pics/default'">
+              </div>
+              <div class='col-md-7' >
+                <h1 class='lead itemName'></h1>
+                <p class='itemDetail text-left'>
+                  <strong>Type: </strong><span class='itemType'></span></br>
+                  <strong>Condition:</strong><span class='itemCondition'></span></br>
+                  <strong>Quantity: </strong><span class='quantity'></br></br>
+                </p>
+                <dl>
+                  <dt>Description:</dt>
+                  <dd class='pre'></br><span class='itemDesc'></span></dd>
+                </dl>
+              </div>
+            </div>
           </div>
-          <div class='col-md-7' >
-            <h1 class='lead itemName'></h1>
-            <p class='itemDetail text-left'>
-              <strong>Type: </strong><span class='itemType'></span></br>
-              <strong>Condition:</strong><span class='itemCondition'></span></br>
-              <strong>Quantity: </strong><span class='quantity'></br></br>
-            </p>
-            <dl>
-              <dt>Description:</dt>
-              <dd class='pre'></br><span class='itemDesc'></span></dd>
-            </dl>
+          <div class='col-md-7'>
+            <div class='form-group' style='position:relative'>
+              Price Offer:<input type='text' id='priceOffer'>
+              <input type="text" class='form-control' id='userItemSearch' placeholder="Search Your Items" style="border-radius:0">
+              <div class='searchDrop' tabindex="-1" >
+              </div>
+            </div>
           </div>
         </div>
       </div>

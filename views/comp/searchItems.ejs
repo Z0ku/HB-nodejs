@@ -1,0 +1,21 @@
+<%if(data.length !== 0){
+  for(var i = 0;i < data.length;i++){%>
+    <div class="searchItem row">
+      <div class="col-md-3 searchPic">
+        <img src="/img/item_pics/<%=data[i].item_id%>" onerror="this.src='/img/item_pics/default'">
+      </div>
+      <div class="col-md-7">
+        <div class='text-left'>
+          <%=data[i].itemName%></br>
+          Quantity: <%=data[i].quantity%></br>
+          Collection: <%=data[i].collName%>
+        </div>
+      </div>
+      <div class='col-md-2'>
+        <button class="btn btn-primary text-right addTradeItem" data-itemId="<%=data[i].item_id%>">Add</button>
+      </div>
+    </div>
+  <%}%>
+<%}else{%>
+  <div class='text-center'>No Items Found</div>
+<%}%>

@@ -1,7 +1,7 @@
 var express = require('express');
 var path = require('path');
 var formidable = require('formidable');
-var fs = require('fs');      //File System - for file manipu
+var fs = require('fs');
 var session = require('express-session');
 var app = express();
 var mysql = require('mysql');
@@ -371,7 +371,28 @@ app.get('/registerUser',function(req,res){
   insertFull(req.query,'users',res,function(data){
     res.send('success');
   });
-
+});
+app.get('/searchUserItems/:id',function(req,res){
+  pool.getConnection(function(err,connection){
+    if(!err){
+      console.log('connected as id ' + connection.threadId);
+      var query = "SELECT items.item_id,items.itemName,items.quantity,collections.coll_id,collections.collName "+
+                  "FROM items JOIN collections ON collections.coll_id=items.coll_id WHERE LOWER(items.itemName) "+
+                  "LIKE LOWER('"+req.query.q+"%') "+
+                  "AND collections.user_id="+req.params.id+" AND items.itemStatus='Active'";
+      connection.query(query,function(err,rows){
+        if(err){
+          console.log(err);
+          res.send(err);
+        }else{
+          res.render('comp/searchItems',{data:rows});
+        }
+      });
+    }else{
+      console.log(err);
+      res.send(err);
+    }
+  });
 });
 app.post('/updateCollDesc',function(req,res){
   var form = new formidable.IncomingForm();

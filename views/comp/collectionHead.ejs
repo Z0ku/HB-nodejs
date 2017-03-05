@@ -12,12 +12,10 @@
           <div class='row'>
             <div class='col-md-8 col-md-offset-2 collHeadPic hasEdit'>
               <% if(collData.user_id == session.loginUserId){%>
-
                 <div class='editPic text-center'>
                   <button class='btn btn-primary'>Edit</button>
                   <input class='picChange' type='file' style='visibility:hidden' name='/img/collection_pics/<%=collId%>'>
                 </div>
-
               <%}%>
               <img id='collMainPic' src='/img/collection_pics/<%=collId%>' onerror="this.src='/img/collection_pics/default.png'">
             </div>

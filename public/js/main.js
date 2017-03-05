@@ -22,3 +22,26 @@ $('.loader').bind('ajaxStart', function(){
 }).bind('ajaxStop', function(){
     $(this).hide();
 });
+var userSearchThread;
+$('#userItemSearch').on('keyup',function(){
+
+    var searchItems = $(this).siblings('.searchDrop');
+    var query = $(this).val();
+    clearInterval(userSearchThread);
+    if($(this).val() == ""){
+      $(searchItems).hide();
+    }else{
+    userSearchThread = setTimeout(function(){
+
+      $(searchItems).show();
+      $.ajax({
+        url:'/searchUserItems/'+sessUser,
+        type: "GET",
+        data:{q:query},
+        success:function(data){
+          $(searchItems).html(data);
+        },
+      });
+    },500);
+  }
+});
