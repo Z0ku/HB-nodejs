@@ -17,7 +17,7 @@
                 <p class='itemDetail text-left'>
                   <strong>Type: </strong><span class='itemType'></span></br>
                   <strong>Condition:</strong><span class='itemCondition'></span></br>
-                  <strong>Quantity: </strong><span class='quantity'></br></br>
+                  <strong>Quantity: </strong><span class='quantity'></span></br></br>
                 </p>
                 <dl>
                   <dt>Description:</dt>
@@ -27,8 +27,24 @@
             </div>
           </div>
           <div class='col-md-7'>
-            <div class='form-group' style='position:relative'>
+            <div class='form-group' id='tradeOffer' style='position:relative'>
+              <h4 class='text-center'>Your Offer</h4>
+              Trade Quantity:<input type='number' value='1' min='1' id='tradeQuantity'></br></br>
               Price Offer:<input type='text' id='priceOffer'>
+              <table class="table table-inverse">
+                <thead>
+                  <tr>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>X</th>
+                  </tr>
+                </thead>
+                <tbody id='tradeItems'>
+
+                </tbody>
+              </table>
+              Trade Description:
+              <textarea class='form-control' id='tradeDesc'></textarea>
               <input type="text" class='form-control' id='userItemSearch' placeholder="Search Your Items" style="border-radius:0">
               <div class='searchDrop' tabindex="-1" >
               </div>
@@ -38,7 +54,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send Trade Offer</button>
+        <button type="button" class="btn btn-primary" id='sendTradeOffer'>Send Trade Offer</button>
       </div>
     </div>
   </div>

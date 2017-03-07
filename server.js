@@ -45,6 +45,7 @@ var pool = mysql.createPool({
   database : 'hb_db',
   debug    :  false
 });
+
 function md5HashString(str){
   var md5HashSum = crypto.createHash('md5');
   md5HashSum.update(str);
@@ -69,21 +70,16 @@ function makeConditions(query,connection){
   cond = condArr.join('AND ');
   return cond;
 }
-function makeValues(query,connection){
-  var vals = "(";
-  var valArr = [];
+function makeValues(query){
+  var vals = [];
   var i = 0;
   for(var key in query){
-    valArr[i] = connection.escape(query[key]);
+    vals[i] = mysql.format('?',query[key]);
     i++;
   }
-  var max = i-1;
-  for(i = 0;i < max;i++){
-    vals += valArr[i]+",";
-  }
-  vals += valArr[i]+")";
-  return vals;
+  return vals.join(',');
 }
+
 function makeJoinConditions(query,connection){
   var J = " ";
   var i = 0;
@@ -171,8 +167,8 @@ function insertFull(query,table,res,callback){
   pool.getConnection(function(err,connection){
      if(!err){
        console.log('connected as id ' + connection.threadId);
-       var vals = makeValues(query,connection);
-       connection.query("INSERT INTO "+table+" VALUES"+vals,function(err,result){
+       var vals = makeValues(query);
+       connection.query("INSERT INTO "+table+" VALUES("+vals+")",function(err,result){
            connection.release();
            if(err){
              console.log(err);
@@ -377,8 +373,9 @@ app.get('/searchUserItems/:id',function(req,res){
     if(!err){
       console.log('connected as id ' + connection.threadId);
       var query = "SELECT items.item_id,items.itemName,items.quantity,collections.coll_id,collections.collName "+
-                  "FROM items JOIN collections ON collections.coll_id=items.coll_id WHERE LOWER(items.itemName) "+
-                  "LIKE LOWER('"+req.query.q+"%') "+
+                  "FROM items JOIN collections ON collections.coll_id=items.coll_id WHERE ( LOWER(items.itemName) "+
+                  "LIKE LOWER('%"+req.query.q+"%') OR LOWER(items.itemType) "+
+                  "LIKE LOWER('%"+req.query.q+"%') )"+
                   "AND collections.user_id="+req.params.id+" AND items.itemStatus='Active'";
       connection.query(query,function(err,rows){
         if(err){
@@ -409,6 +406,21 @@ app.get('/getItem',function(req,res){
     if(data){
       res.json(data[0]);
     }
+  });
+});
+app.post('/addNewTrade',function(req,res){
+  var form = new formidable.IncomingForm();
+  form.parse(req,function(err,fields,files){
+    insertFull(fields.data,'trades',res,function(data){
+      if(data){
+        for(var i = 0;i < fields.items.length;i++){
+          fields.items[i].push(data.insertId);
+          insertFull(fields.items[i],'tradeItems',res,function(data){
+
+          });
+        }
+      }
+    });
   });
 });
 app.listen(80);

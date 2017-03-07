@@ -260,6 +260,9 @@ img{
   top:0;
   left: 0;
 }
+.tradeItemId{
+  display: none;
+}
 #userItemSearch{
   margin-top: 15px;
   border-radius: 0px !important;
@@ -270,7 +273,7 @@ img{
   background-color: #fbfbf2;
   height: 175px;
   width: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 .searchItem{
   height:85px;
@@ -280,6 +283,10 @@ img{
   padding-left: 0px;
   padding-right: 0px;
 }
+.tradeQuant{
+  width: 70px;
+}
+
 .searchItem div{
   padding: 0px;
 }

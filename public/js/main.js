@@ -11,7 +11,9 @@ function logout(){
   $.ajax({
     url:'/logout'
   });
-  window.location.href = window.location.href
+  setTimeout(function(){
+    window.location.href = window.location.href;
+  },2000);
 }
 String.prototype.replaceAll = function(search, replacement) {
   var target = this;
@@ -44,4 +46,37 @@ $('#userItemSearch').on('keyup',function(){
       });
     },500);
   }
+});
+
+$("#sendTradeOffer").on('click',function(){
+  var tradeData;
+  tradeData = [7];
+  tradeData[0]= '';
+  tradeData[1] = curr_trade;
+  tradeData[2]= sessUser;
+  tradeData[3] = $('#tradeQuantity').val();
+  tradeData[4] = 'Offer';
+  tradeData[5] = parseFloat($('#priceOffer').val());
+  tradeData[6] = $('#tradeDesc').val();
+
+  var tradeItems = [];
+  $('.tradeItemRow').each(function(index){
+    var tradeItem  = [];
+    tradeItem.push($(this).data('itemid'));
+    tradeItem.push($(this).find('.tradeQuant').val());
+    tradeItems.push(tradeItem);
+  });
+
+  var newTrade = {
+    data:tradeData,
+    items:tradeItems
+  }
+  console.log(newTrade);
+  $.ajax({
+    url: '/addNewTrade',
+    type:"POST",
+    data:JSON.stringify(newTrade),
+    contentType: "application/json"
+  })
+
 });
