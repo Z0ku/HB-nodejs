@@ -59,7 +59,7 @@ border-width: medium !important;
   border-right: 2px solid #66290b;
 }
 .profileBack{
-  height:400px;
+  height:550px;
 }
 
 input,textarea{
@@ -195,6 +195,9 @@ img{
 .navbar-default .navbar-nav > li > a{
      color: rgba(229, 230, 228, 1) !important;
 }
+.tablePic{
+  height:150px;
+}
 .navbar-default{
    background: #847577;
    margin-bottom: 0px !important;
@@ -303,10 +306,13 @@ img{
   background-color: hsla(352, 6%, 49%, 0.75);
   border-color: white;
   position:relative;
-  top:45%;
+  top:50px;
 }
 .editPic .btn:active{
   border-color: inherit;
+}
+.list-group-image{
+  height:300px !important;
 }
 .error{
     font-size:17px;

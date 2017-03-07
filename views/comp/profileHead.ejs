@@ -9,7 +9,7 @@
     <div class='col-md-10 col-md-offset-1 profileCont'>
       <div class='col-md-3'>
         <div class='row'>
-          <div class='col-md-10 col-md-offset-1  profilePic hasEdit'>
+          <div class='col-md-6 col-md-offset-3  profilePic hasEdit'>
             <img src='/img/profile_pics/<%=user.id%>' onerror="this.src='/img/profile_pics/default.jpg'">
           <% if(user.name == session.loginUser){%>
             <div class='editPic text-center'>
@@ -32,7 +32,7 @@
           <ul class="nav nav-tabs">
             <li role="presentation" ><a href="/users/<%=user.id%>">Feed</a></li>
             <li role="presentation" ><a href="/users/<%=user.id%>/collections">Collections</a></li>
-            <li role="presentation" ><a href="#">Trades</a></li>
+            <li role="presentation" ><a href="#">Trade History</a></li>
             <li role="presentation"><a href="#">Friends</a></li>
           </ul>
         </div>

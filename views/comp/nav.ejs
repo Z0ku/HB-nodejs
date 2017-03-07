@@ -21,6 +21,7 @@
       <ul class="nav navbar-nav navbar-right">
         <% if(session.loginUser){%>
           <li><a href="/users/<%=session.loginUserId%>"><%=session.loginUser%></a></li>
+          <li><a href="/trades" class='glyphicon glyphicon-resize-small'></a></li>
           <li><a href="#" onclick="logout()">Logout</a></li>
         <%}else{%>
           <li><a href="/login">Login</a></li>

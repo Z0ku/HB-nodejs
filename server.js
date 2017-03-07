@@ -64,7 +64,7 @@ function makeConditions(query,connection){
   var condArr = [];
   var i = 0;
   for(var key in query){
-    condArr[i] = ""+key+"="+connection.escape(query[key])+" ";
+    condArr[i] = connection.format(" ?? = ? ",[key,query[key]]);
     i++;
   }
   cond = condArr.join('AND ');
@@ -84,7 +84,7 @@ function makeJoinConditions(query,connection){
   var J = " ";
   var i = 0;
   for(var table in query){
-    if(table.toString().search('JOIN') === -1){
+    if(table.search('JOIN') === -1){
       J += table+"="+query[table]+" ";
       i++;
     }else{
@@ -422,5 +422,17 @@ app.post('/addNewTrade',function(req,res){
       }
     });
   });
+});
+app.get('/trades',function(req,res){
+  if(req.session.loginUserId){
+    var query = {"INNER JOIN":"items","items.item_id":"trades.item_id","JOIN":"collections","collections.coll_id":"items.coll_id"};
+      var conds = "WHERE collections.user_id="+req.session.loginUserId+" AND items.itemStatus='Active'"
+    getQueryDataJoin(query,conds,'trades','trades.*,items.itemName,collections.collName',function(data){
+      res.render('trades',{session:req.session,tradeOffers:data});
+
+    });
+  }else{
+    res.redirect('/login');
+  }
 });
 app.listen(80);
