@@ -133,8 +133,10 @@ img{
 }
 .smallProfilePic{
   height:75px;
-  width: 50px;
   border-radius: 5px;
+}
+.smallProfilePic img{
+  height: inherit;
 }
 .collCont{
   margin-top: 20px;
@@ -245,8 +247,8 @@ img{
 .modal{
   color: #847577;
 }
+
 .modal-content{
-  background-color: #cfd2cd;
   height: 525px;
   overflow: scroll;
 }
@@ -329,6 +331,18 @@ img{
 }
 .list-group-image{
   height:300px !important;
+}
+table{
+  width:inherit;
+}
+.smallCell{
+  width:20%;
+}
+.medCell{
+  width: 30%;
+}
+.largeCell{
+  width: 50%;
 }
 .error{
     font-size:17px;

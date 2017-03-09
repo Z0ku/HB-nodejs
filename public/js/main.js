@@ -83,7 +83,7 @@ $('.offerBtn').on('click',function(){
   $.ajax({
     url: '/tradeOffer',
     type: 'GET',
-    data:{id:id,sessUser:sessUser},
+    data:{id:id},
     success:  function(data){
       $('#viewOffer').find('.modal-body').html(data);
     }

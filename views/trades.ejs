@@ -7,46 +7,49 @@
 </head>
 <body>
   <% include comp/nav.ejs %>
+  <% var showItem = true%>
   <div class='container-fluid'>
     <div class='row'>
       <div class='col-md-8 col-md-offset-2'>
         <div class='row'>
           <div class='col-md-12 tableHead'>
-            <h4 class='lead'>Currently Trading</h4>
-          </div>
-          <table class='table'>
-            <thead>
-              <th>Item</th>
-              <th>User</th>
-              <th>View Offer</th>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-          <div class='col-md-12 tableHead'>
             <h4 class='lead'>Trade Offers:</h4>
           </div>
           <table class='table'>
             <thead>
-              <th>Item</th>
-              <th>User</th>
-              <th>View Offer</th>
+              <th class='largeCell'>Item</th>
+              <th class='smallCell'>User</th>
+              <th class='medCell'>Options</th>
             </thead>
             <tbody>
           <% include comp/tradeOffers.ejs%>
             </tbody>
           </table>
           <div class='col-md-12 tableHead'>
-            <h4 class='lead'>Your Offers</div>
+            <h4 class='lead'>Your Offers</h4>
           </div>
           <table class='table'>
             <thead>
-              <th>Item</th>
-              <th>User</th>
-              <th>View Offer</th>
+              <th class='largeCell'>Item</th>
+              <th class='smallCell'>User</th>
+              <th class='medCell'>Options</th>
             </thead>
             <tbody>
-              <%tradeOffers = userOffers;%> 
+              <%tradeOffers = userOffers;%>
+              <% include comp/tradeOffers.ejs%>
+            </tbody>
+          </table>
+          <div class='col-md-12 tableHead'>
+            <h4 class='lead'>Currently Trading</h4>
+          </div>
+          <table class='table'>
+            <thead>
+              <th class='largeCell'>Item</th>
+              <th class='smallCell'>User</th>
+              <th class='medCell'>Options</th>
+            </thead>
+            <tbody>
+              <%tradeOffers = trading;%>
               <% include comp/tradeOffers.ejs%>
             </tbody>
           </table>

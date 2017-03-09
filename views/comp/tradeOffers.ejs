@@ -2,20 +2,32 @@
   var trade = tradeOffers[i];
   %>
   <tr>
-    <td scope='row'>
-        <div class='col-md-12'>
-          <h4><%=trade.itemName%></h4></br>
-          Collection: <%=trade.collName%>
+    <% if(showItem == true){%>
+      <td scope='row' class='largeCell'>
+          <div class='col-md-12'>
+            <h4><%=trade.itemName%></h4>
+            Collection: <%=trade.collName%>
+          </div>
+      </td>
+      <%}%>
+    <td scope='row' class='smallCell'>
+      <a href='/users/<%=trade.trader_id%>'>
+        <div class='row no-gutters'>
+          <div class='col-md-6 smallProfilePic'>
+            <img src='/img/profile_pics/<%=trade.trader_id%>' onerror="this.src='/img/profile_pics/default.jpg'">
+          </div>
+          <div class='col-md-6'>
+            <p><%=trade.username%></p>
+          </div>
         </div>
-    </td>
-    <td scope='row'>
-      <a href='/users/<%=trade.user_id%>  text-left'>
-        <p><%=trade.username%></p>
       </a>
     </td>
-    <td scope='row'>
+    <td scope='row' class='medCell'>
+
       <button class='btn btn-primary offerBtn' data-id='<%=trade.trade_id%>' data-toggle="modal" data-target="#viewOffer">View Offer</button>
-      
+      <% if(trade.trader_id == session.loginUserId){%>
+        <button class='btn btn-danger cancelBtn' data-id='<%=trade.trade_id%>' data-toggle="modal">Cancel</button>
+      <%}%>
     </td>
   </tr>
 <%}%>

@@ -34,7 +34,7 @@
       </tbody>
     </table>
   </div>
-  <%if(tradeOffer.user_id != session.loginUserId){%>
+  <%if(owner == session.loginUserId){%>
     <div class='col-md-12 text-center'>
       <button class='btn btn-success' id='acceptTrade'>Accept Trade</button>
       <button class='btn btn-danger' id='declineTrade'>Decline Trade</button>
