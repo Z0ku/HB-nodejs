@@ -1,33 +1,64 @@
 <% for(var i = 0;i < tradeOffers.length;i++){
   var trade = tradeOffers[i];
   %>
+  <% if(trade.tradeStatus != 'Currently Trading' ||
+   ( !(trade.trader_id == session.loginUserId && trade.traderStatus == 'Canceled') && !(trade.owner_id == session.loginUserId && trade.ownerStatus == 'Canceled'))){
+     var user = false;
+     var userStatus = false;
+      if(trade.trader_id == session.loginUserId || trade.owner_id == session.loginUserId ){
+        user = (trade.trader_id == session.loginUserId)?trade.trader_id:trade.owner_id;
+        userStatus = (trade.trader_id == session.loginUserId)?trade.traderStatus:trade.ownerStatus;
+      }
+     %>
   <tr>
+
     <% if(showItem == true){%>
       <td scope='row' class='largeCell'>
+        <a href='/item/<%=trade.item_id%>'
           <div class='col-md-12'>
             <h4><%=trade.itemName%></h4>
             Collection: <%=trade.collName%>
           </div>
+        </a>
       </td>
       <%}%>
+    <%
+    var id = trade.trader_id;
+    var name = trade.traderName;
+      if(itemOffers == false && session.loginUserId == trade.trader_id){
+        var id = trade.owner_id;
+        var name = trade.ownerName + "\n(Owner)";
+      }
+    %>
     <td scope='row' class='smallCell'>
-      <a href='/users/<%=trade.trader_id%>'>
+
+      <a href='/users/<%=id%>'>
         <div class='row no-gutters'>
           <div class='col-md-6 smallProfilePic'>
-            <img src='/img/profile_pics/<%=trade.trader_id%>' onerror="this.src='/img/profile_pics/default.jpg'">
+            <img src='/img/profile_pics/<%=id%>' onerror="this.src='/img/profile_pics/default.jpg'">
           </div>
           <div class='col-md-6'>
-            <p><%=trade.username%></p>
+            <p><%=name%></p>
           </div>
         </div>
       </a>
     </td>
     <td scope='row' class='medCell'>
 
+
+      <%if(user && trade.tradeStatus == 'Currently Trading'){
+          if(trade.ownerStatus != 'Canceled' && trade.tradeStatus != 'Canceled'){
+            var check = "glyphicon glyphicon-ok";
+            %>
+            <button data-id='<%=trade.trade_id%>' class='btn btn-success confirm' <%=(userStatus == 'Received')?'disabled':'';%>>Received<span class='<%=(userStatus == 'Received')?check:'';%>'></span></button>
+            <button data-id='<%=trade.trade_id%>' class='btn btn-danger cancelTrade' <%=(trade.traderStatus == 'Received' || trade.ownerStatus == 'Received')?'disabled':'';%>>Cancel</button>
+          <%}%>
+      <%}%>
       <button class='btn btn-primary offerBtn' data-id='<%=trade.trade_id%>' data-toggle="modal" data-target="#viewOffer">View Offer</button>
-      <% if(trade.trader_id == session.loginUserId){%>
-        <button class='btn btn-danger cancelBtn' data-id='<%=trade.trade_id%>' data-toggle="modal">Cancel</button>
+      <% if(trade.trader_id == session.loginUserId && trade.tradeStatus == 'Offer'){%>
+        <button class='btn btn-danger cancelOffer' data-id='<%=trade.trade_id%>' data-toggle="modal">Cancel</button>
       <%}%>
     </td>
   </tr>
+  <%}%>
 <%}%>

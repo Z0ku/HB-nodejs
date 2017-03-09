@@ -7,10 +7,12 @@
 </head>
 <body>
   <% include comp/nav.ejs %>
-  <% var showItem = true%>
+  <% var showItem = true;
+     var itemOffers = false;
+  %>
   <div class='container-fluid'>
     <div class='row'>
-      <div class='col-md-8 col-md-offset-2'>
+      <div class='col-md-10 col-md-offset-1'>
         <div class='row'>
           <div class='col-md-12 tableHead'>
             <h4 class='lead'>Trade Offers:</h4>
@@ -26,7 +28,7 @@
             </tbody>
           </table>
           <div class='col-md-12 tableHead'>
-            <h4 class='lead'>Your Offers</h4>
+            <h4 class='lead'>Your Offers:</h4>
           </div>
           <table class='table'>
             <thead>
@@ -40,7 +42,7 @@
             </tbody>
           </table>
           <div class='col-md-12 tableHead'>
-            <h4 class='lead'>Currently Trading</h4>
+            <h4 class='lead'>Currently Trading:</h4>
           </div>
           <table class='table'>
             <thead>

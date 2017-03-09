@@ -103,3 +103,20 @@ $(document).on('click','#acceptTrade',function(){
     }
   });
 });
+function disableBtn(btn){
+  btn.prop('disabled',true);
+}
+$(document).on('click','.confirm',function(){
+    disableBtn($(this));
+    disableBtn($(this).siblings('.cancelTrade'));
+    $(this).append('<span class="glyphicon glyphicon-ok"></span>');
+    var id = $(this).data('id');
+    $.ajax({
+      url:'/confirmReceive',
+      type: 'GET',
+      data: {trade_id:id},
+      success: function(data){
+        alert(data);
+      }
+    });
+});
