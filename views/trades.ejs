@@ -11,7 +11,46 @@
     <div class='row'>
       <div class='col-md-8 col-md-offset-2'>
         <div class='row'>
+          <div class='col-md-12 tableHead'>
+            <h4 class='lead'>Currently Trading</h4>
+          </div>
+          <table class='table'>
+            <thead>
+              <th>Item</th>
+              <th>User</th>
+              <th>View Offer</th>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+          <div class='col-md-12 tableHead'>
+            <h4 class='lead'>Trade Offers:</h4>
+          </div>
+          <table class='table'>
+            <thead>
+              <th>Item</th>
+              <th>User</th>
+              <th>View Offer</th>
+            </thead>
+            <tbody>
           <% include comp/tradeOffers.ejs%>
+            </tbody>
+          </table>
+          <div class='col-md-12 tableHead'>
+            <h4 class='lead'>Your Offers</div>
+          </div>
+          <table class='table'>
+            <thead>
+              <th>Item</th>
+              <th>User</th>
+              <th>View Offer</th>
+            </thead>
+            <tbody>
+              <%tradeOffers = userOffers;%> 
+              <% include comp/tradeOffers.ejs%>
+            </tbody>
+          </table>
+
         </div>
       </div>
     </div>
@@ -24,7 +63,7 @@
           <h4 class="modal-title">View Offer</h4>
         </div>
         <div class="modal-body">
-          
+
         </div>
       </div>
     </div>

@@ -458,7 +458,7 @@ app.get('/tradeOffer',function(req,res){
     var conds = "WHERE tradeItems.trade_id="+req.query.id;
     getQueryDataJoin(query,conds,"tradeItems","tradeItems.*,tradeItems.item_id,items.itemName",function(tradeItems){
       getQueryData({trade_id:req.query.id},"trades","*",res,function(tradeOffer){
-        res.render('comp/viewOffer',{tradeItems:tradeItems,tradeOffer:tradeOffer[0]});
+        res.render('comp/viewOffer',{session:req.session,tradeItems:tradeItems,tradeOffer:tradeOffer[0]});
       });
     });
   }else{
@@ -477,11 +477,16 @@ app.get('/trades',function(req,res){
       ["JOIN","users","J"],
       ["users.user_id","trades.user_id","C"]
     ];
-    var conds = "WHERE collections.user_id="+req.session.loginUserId+" AND items.itemStatus='Active'";
-    getQueryDataJoin(query,conds,'trades','trades.*,items.itemName,collections.collName,users.username',function(data){
-      res.render('trades',{session:req.session,tradeOffers:data});
+    var conds = "WHERE collections.user_id="+req.session.loginUserId+" AND trades.tradeStatus='Offer'";
+    getQueryDataJoin(query,conds,'trades','trades.trade_id,items.itemName,collections.user_id,collections.collName,users.username',function(tradeOffers){
+      query[5] = ["users.user_id","collections.user_id","C"];
+      conds = "WHERE trades.user_id="+req.session.loginUserId+" AND trades.tradeStatus='Offer'";
+      getQueryDataJoin(query,conds,'trades','trades.trade_id,items.itemName,collections.collName,collections.user_id,users.username',function(userOffers){
+        res.render('trades',{session:req.session,tradeOffers:tradeOffers,userOffers:userOffers});
 
+      });
     });
+
   }else{
     res.redirect('/login');
   }

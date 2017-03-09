@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 07, 2017 at 10:14 AM
+-- Generation Time: Mar 09, 2017 at 03:33 AM
 -- Server version: 10.1.19-MariaDB
 -- PHP Version: 7.0.9
 
@@ -76,8 +76,8 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`item_id`, `coll_id`, `itemName`, `itemType`, `itemDesc`, `itemCondition`, `quantity`, `tradeStatus`, `tradePrice`, `dateAdded`, `itemStatus`) VALUES
 (1, 1, 'Blonde on Blonde', 'Album', 'Dylan''s best album', 'Good', 1, 'Trading', 3000.5, '2017-03-04 00:04:37', 'Active'),
-(2, 2, 'Jojos Bizzare Adventure Part 1: Phantom Blood', 'Manga', 'Jonathan Joestar', 'Acceptable', 1, 'Trading', 50.36, '2017-03-04 11:09:16', 'Active'),
-(3, 2, 'Jojos Bizzare Adventure Part 2: Battle Tendency', 'Manga', 'Joseph Joestar', 'Mint', 1, 'Trading', 75.25, '2017-03-04 14:39:18', 'Active'),
+(2, 2, 'Jojo''s Bizzare Adventure Part 1: Phantom Blood', 'Manga', 'Jonathan Joestar', 'Acceptable', 1, 'Trading', 50.36, '2017-03-04 11:09:16', 'Active'),
+(3, 2, 'Jojo''s Bizzare Adventure Part 2: Battle Tendency', 'Manga', 'Joseph Joestar', 'Mint', 1, 'Trading', 75.25, '2017-03-04 14:39:18', 'Active'),
 (4, 1, 'Blood On the Tracks', 'Album', '2nd Best Album', 'Mint', 1, 'Not Trading', 0, '2017-03-04 23:33:01', 'Active'),
 (5, 2, 'Berserk Vol.1', 'Manga', 'Kentaro Miura''s classic.', 'Mint', 2, 'Trading', 120.43, '2017-03-05 23:58:00', 'Active'),
 (6, 2, 'Jojo''s Bizzare Adventure Part 3: Stardust Crusaders', 'Manga', 'Jotaro Kujo', 'Good', 2, 'Trading', 43.52, '2017-03-06 19:52:47', 'Active'),
@@ -108,7 +108,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('Z2UqKrZPncTo6dEONW8WIBoqiJj9TO59', 1488903076, '{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"loginUser":"bob","loginUserId":1}');
+('RBXS76DojQ9iFBBBxLAX5ylR0nnoi6yQ', 1489069213, '{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"loginUser":"riz","loginUserId":2}'),
+('y-8AZmC3dG1A27bh0VGFVcCz2ho8SVrN', 1489112994, '{"cookie":{"originalMaxAge":null,"expires":null,"httpOnly":true,"path":"/"},"loginUser":"bob","loginUserId":1}');
 
 -- --------------------------------------------------------
 
@@ -127,7 +128,9 @@ CREATE TABLE `tradeItems` (
 --
 
 INSERT INTO `tradeItems` (`item_id`, `itemQuant`, `trade_id`) VALUES
-(1, 1, 2);
+(1, 1, 2),
+(2, 1, 3),
+(3, 1, 3);
 
 -- --------------------------------------------------------
 
@@ -140,7 +143,7 @@ CREATE TABLE `trades` (
   `item_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `tradeQuantity` int(11) NOT NULL,
-  `tradeStatus` enum('Offer','Declined','Accepted') NOT NULL,
+  `tradeStatus` enum('Offer','Declined','Completed','Currently Trading') NOT NULL,
   `priceOffer` float DEFAULT NULL,
   `tradeDesc` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -150,7 +153,22 @@ CREATE TABLE `trades` (
 --
 
 INSERT INTO `trades` (`trade_id`, `item_id`, `user_id`, `tradeQuantity`, `tradeStatus`, `priceOffer`, `tradeDesc`) VALUES
-(2, 3, 1, 1, 'Offer', 50.45, 'Giff me JOJO!!');
+(2, 3, 1, 1, 'Offer', 50.45, 'Giff me JOJO!!'),
+(3, 1, 2, 1, 'Offer', 250.43, 'Jojo for Dylan');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tradingStatus`
+--
+
+CREATE TABLE `tradingStatus` (
+  `trade_id` int(11) NOT NULL,
+  `owner_id` int(11) NOT NULL,
+  `trader_id` int(11) NOT NULL,
+  `ownerStatus` enum('Not Received','Received') NOT NULL,
+  `traderStatus` enum('Not Received','Received') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -205,6 +223,12 @@ ALTER TABLE `trades`
   ADD PRIMARY KEY (`trade_id`);
 
 --
+-- Indexes for table `tradingStatus`
+--
+ALTER TABLE `tradingStatus`
+  ADD PRIMARY KEY (`trade_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -229,7 +253,7 @@ ALTER TABLE `items`
 -- AUTO_INCREMENT for table `trades`
 --
 ALTER TABLE `trades`
-  MODIFY `trade_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `trade_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `users`
 --

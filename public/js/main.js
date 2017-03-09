@@ -11,9 +11,7 @@ function logout(){
   $.ajax({
     url:'/logout'
   });
-  setTimeout(function(){
     window.location.href = window.location.href;
-  },2000);
 }
 String.prototype.replaceAll = function(search, replacement) {
   var target = this;
@@ -85,7 +83,7 @@ $('.offerBtn').on('click',function(){
   $.ajax({
     url: '/tradeOffer',
     type: 'GET',
-    data:{id:id},
+    data:{id:id,sessUser:sessUser},
     success:  function(data){
       $('#viewOffer').find('.modal-body').html(data);
     }

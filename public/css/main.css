@@ -61,7 +61,10 @@ border-width: medium !important;
 .profileBack{
   height:550px;
 }
-
+.tableHead{
+  border-bottom:3px solid #847577;
+  padding-top:10px
+}
 input,textarea{
     border-radius: 20px !important;
     opacity: 0.6 !important;
