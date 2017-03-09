@@ -1,0 +1,44 @@
+<div class='row'>
+  <div class='col-md-12'>
+    <h4>Quantity: <%=tradeOffer.tradeQuantity%></h4>
+    <h4>Price: <%=tradeOffer.priceOffer%></h4>
+  </div>
+  <div class='col-md-12'>
+    <h4>Trade Items:</h4>
+    <table class='table'>
+      <thead>
+        <th>Item Name</th>
+        <th>Qty</th>
+      </thead>
+      <tbody>
+
+        <%for(var i = 0;i < tradeItems.length;i++){
+          var tradeItem = tradeItems[i];
+          %>
+
+          <tr>
+          <td>
+            <a href='/item/<%=tradeItem.item_id%>'>
+              <div class='row'>
+                <div class='col-md-3 smallTablePic'>
+                  <img src='/img/item_pics/<%=tradeItem.item_id%>' onerror="this.src='/img/item_pics/default'" />
+                </div>
+                <div class='col-md-9'>
+                  <h4><%=tradeItem.itemName%></h4>
+                </div>
+              </div>
+            </a>
+          </td>
+          <td>
+            <%=tradeItem.itemQuant%>
+          </td>
+        </tr>
+        <%}%>
+      </tbody>
+    </table>
+  </div>
+  <div class='col-md-12 text-center'>
+    <button class='btn btn-success' id='acceptTrade'>Accept Trade</button>
+    <button class='btn btn-danger' id='declineTrade'>Decline Trade</button>
+  </div>
+</div>

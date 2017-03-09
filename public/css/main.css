@@ -122,10 +122,16 @@ img{
   border: none;
 }
 .profilePic{
-  height:150px;
+  height:160px;
   padding: 0;
   border-radius: 25px;
+  overflow: hidden;
   border: 4px solid #e8e9eb;
+}
+.smallProfilePic{
+  height:75px;
+  width: 50px;
+  border-radius: 5px;
 }
 .collCont{
   margin-top: 20px;
@@ -195,8 +201,15 @@ img{
 .navbar-default .navbar-nav > li > a{
      color: rgba(229, 230, 228, 1) !important;
 }
+.itemContainer{
+  padding: 0px;
+}
+
 .tablePic{
   height:150px;
+}
+.smallTablePic{
+  height:125px;
 }
 .navbar-default{
    background: #847577;

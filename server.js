@@ -7,7 +7,10 @@ var app = express();
 var mysql = require('mysql');
 var crypto = require('crypto');
 var util = require('util');
+var nodemysql = require('node-mysql'); //FIGURE OUT!!!
 var MySQLStore = require('express-mysql-session')(session);
+
+
 
 var options = {
     host: 'localhost',
@@ -82,13 +85,15 @@ function makeValues(query){
 
 function makeJoinConditions(query,connection){
   var J = " ";
-  var i = 0;
-  for(var table in query){
-    if(table.search('JOIN') === -1){
-      J += table+"="+query[table]+" ";
-      i++;
-    }else{
-      J += table+" "+query[table]+" ON ";
+  for(var i = 0;i < query.length;i++){
+    var table = query[i];
+    switch(table[2]){
+      case "J":
+        J += table[0]+" "+table[1]+" ON ";break;
+      case "C":
+        J += table[0]+"="+table[1]+" ";break;
+      case "V":
+        J += table[0]+"="+connection.format("?",table[1])+" ";break;
     }
   }
   return J;
@@ -153,7 +158,6 @@ function getQueryDataJoin(query,cond,table,col,callback){
           console.log("SELECT "+col+" FROM "+table+""+J+cond);
           return callback(false);
         }else{
-
           return callback(rows);
         }
       });
@@ -265,7 +269,7 @@ app.get('/users/:id/collections',function(req,res){
   var user = {user_id:req.params.id};
   getQueryData(user,'users','user_id,username',res,function(data){
     if(data){
-      var query = {'LEFT JOIN':'items','collections.coll_id':'items.coll_id'};
+      var query = [['LEFT JOIN','items',"J"],['collections.coll_id','items.coll_id',"C"]];
       getQueryDataJoin(query,"WHERE collections.user_id="+req.params.id+" GROUP BY collections.coll_id",'collections','collections.*,count(items.item_id) as itemCount',
                        function(collection){
         if(collection){
@@ -280,7 +284,7 @@ app.get('/users/:id/collections',function(req,res){
   });
 });
 app.get('/collection/:collId',function(req,res){
-  var query = {'JOIN':'users','users.user_id':'collections.user_id'};
+  var query = [['JOIN','users',"J"],['users.user_id','collections.user_id',"C"]];
   var collId = parseInt(req.params.collId);
   getQueryDataJoin(query,"WHERE collections.coll_id="+collId,'collections','collections.*,users.username,users.user_id'
   ,function(data){
@@ -292,7 +296,7 @@ app.get('/collection/:collId',function(req,res){
   })
 });
 app.get('/item/:id',function(req,res){
-  var item = {'JOIN':'collections','items.coll_id':'collections.coll_id'};
+  var item = [['JOIN','collections',"J"],['items.coll_id','collections.coll_id',"C"]];
   getQueryDataJoin(item,"WHERE items.item_id="+req.params.id,"items","items.*,collections.coll_id as cColl_id,collections.collName as cCollName,collections.user_id as user_id",function(data){
     if(data){
       getQueryData({user_id:data['user_id']},"users","username",res,function(userData){
@@ -423,11 +427,58 @@ app.post('/addNewTrade',function(req,res){
     });
   });
 });
+app.post('/acceptTrade',function(req,res){
+  var form = new formidable.IncomingForm
+  form.parse(req, function(err, fields, files){
+    update({tradeStatus:'Currently Trading'},"trades",{trade_id:fields.trade_id},function(updateCheck){
+      if(updateCheck){
+        getQueryData({trade_id:fields.trade_id},"trades","user_id",res,function(data){
+          var newTradeStatus = {trade_id:fields.trade_id,
+                                owner_id:fields.ownerId,
+                                trader_id:data[0].user_id,
+                                ownerStatus:'Not Received',
+                                traderStatus:'Not Received'
+                               };
+          insertFull(newTradeStatus,"tradingStatus",res,function(check){
+            if(check){
+              res.send('Accepted Trade');
+            }
+          });
+        });
+      }
+    });
+  });
+});
+app.get('/tradeOffer',function(req,res){
+  if(req.session.loginUserId){
+    var query = [
+      ["JOIN","items","J"],
+      ["items.item_id","tradeItems.item_id","C"],
+    ];
+    var conds = "WHERE tradeItems.trade_id="+req.query.id;
+    getQueryDataJoin(query,conds,"tradeItems","tradeItems.*,tradeItems.item_id,items.itemName",function(tradeItems){
+      getQueryData({trade_id:req.query.id},"trades","*",res,function(tradeOffer){
+        res.render('comp/viewOffer',{tradeItems:tradeItems,tradeOffer:tradeOffer[0]});
+      });
+    });
+  }else{
+    res.redirect('/login');
+  }
+});
+
+
 app.get('/trades',function(req,res){
   if(req.session.loginUserId){
-    var query = {"INNER JOIN":"items","items.item_id":"trades.item_id","JOIN":"collections","collections.coll_id":"items.coll_id"};
-      var conds = "WHERE collections.user_id="+req.session.loginUserId+" AND items.itemStatus='Active'"
-    getQueryDataJoin(query,conds,'trades','trades.*,items.itemName,collections.collName',function(data){
+    var query = [
+      ["JOIN","items","J"],
+      ["items.item_id","trades.item_id","C"],
+      ["JOIN","collections","J"],
+      ["collections.coll_id","items.coll_id","C"],
+      ["JOIN","users","J"],
+      ["users.user_id","trades.user_id","C"]
+    ];
+    var conds = "WHERE collections.user_id="+req.session.loginUserId+" AND items.itemStatus='Active'";
+    getQueryDataJoin(query,conds,'trades','trades.*,items.itemName,collections.collName,users.username',function(data){
       res.render('trades',{session:req.session,tradeOffers:data});
 
     });

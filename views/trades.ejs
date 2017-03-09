@@ -11,46 +11,25 @@
     <div class='row'>
       <div class='col-md-8 col-md-offset-2'>
         <div class='row'>
-          <div class='col-md-12' style= "border-bottom:3px solid #847577;padding-top:10px">
-            <h4 class='lead'>Trade Offers:</h4>
-          </div>
-          <table class='table'>
-            <thead>
-              <th>Item</th>
-              <th>Quantity</th>
-              <th>View Offer</th>
-            </thead>
-            <tbody>
-              <% for(var i = 0;i < tradeOffers.length;i++){
-                var trade = tradeOffers[i];
-                %>
-                <tr>
-                  <td>
-                    <div class='row'>
-                      <div class='col-md-2 tablePic'>
-                        <img src='/img/item_pics/<%=trade.item_id%>' onerror="this.src='/img/item_pics/default'" />
-                      </div>
-                      <div class='col-md-10'>
-                        <h4><%=trade.itemName%></h4></br>
-                        Collection: <%=trade.collName%>
-                      </div>
-                    </div>
-                  </td>
-                  <td><%=trade.tradeQuantity%></td>
-
-                  <td>
-                    <button class='btn btn-primary' data-id='<%=trade.trade_id%>'>View Offer</button></br>
-                    <button class='btn btn-success' data-id='<%=trade.trade_id%>'>Accept</button>
-                    <button class='btn btn-danger' data-id='<%=trade.trade_id%>'>Decline</button>
-                  </td>
-                </tr>
-              <%}%>
-            </tbody>
-          </table>
+          <% include comp/tradeOffers.ejs%>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="viewOffer" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">View Offer</h4>
+        </div>
+        <div class="modal-body">
+          
         </div>
       </div>
     </div>
   </div>
 </body>
 </html>
+
   <% include comp/jslinks.ejs %>

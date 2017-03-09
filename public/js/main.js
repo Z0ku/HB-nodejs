@@ -71,7 +71,6 @@ $("#sendTradeOffer").on('click',function(){
     data:tradeData,
     items:tradeItems
   }
-  console.log(newTrade);
   $.ajax({
     url: '/addNewTrade',
     type:"POST",
@@ -79,4 +78,30 @@ $("#sendTradeOffer").on('click',function(){
     contentType: "application/json"
   })
 
+});
+$('.offerBtn').on('click',function(){
+  var id = $(this).data('id');
+  curr_offer = id;
+  $.ajax({
+    url: '/tradeOffer',
+    type: 'GET',
+    data:{id:id},
+    success:  function(data){
+      $('#viewOffer').find('.modal-body').html(data);
+    }
+  })
+});
+$(document).on('click','#acceptTrade',function(){
+  $.ajax({
+    url:'/acceptTrade',
+    type:"POST",
+    data:JSON.stringify({trade_id:curr_offer,ownerId:sessUser}),
+    contentType: "application/json",
+    succes: function(result){
+      alert(result);
+    },
+    error: function(result){
+      alert(result);
+    }
+  });
 });
