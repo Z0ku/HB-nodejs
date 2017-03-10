@@ -19,13 +19,17 @@
       <strong>Condition:</strong>
       <span class='text-<%=itemConds[itemData.itemCondition]%>'><%=itemData.itemCondition%></span></br>
       <strong>Quantity: </strong><%=itemData.quantity%></br></br>
+
     </p>
     <dl>
       <dt>Description:</dt>
       <dd class='pre'></br><%=itemData.itemDesc%></dd>
     </dl>
+    <p class='lead'>
+      $<%=(itemData.tradePrice)?itemData.tradePrice.toFixed(2).toLocaleString():"N/A"%>
+    </p>
     <% if(itemData.user_id !== session.loginUserId){%>
-      <% include tradeButtons.ejs%>
+        <% include tradeButtons.ejs%>
     <%}%>
   </div>
 </div>

@@ -31,11 +31,9 @@
                  <div class="row">
                      <div class="col-md-12">
                          <p class="lead">
-                           <%if(itemData.tradeStatus == 'Trading'){%>
+
                               $ <%=(itemData.tradePrice)?itemData.tradePrice.toFixed(2).toLocaleString():"N/A"%>
-                            <%}else{%>
-                               N/A
-                            <%}%>
+
                           </p>
                      </div>
                      <%if(session.loginUserId !== collData.user_id){%>

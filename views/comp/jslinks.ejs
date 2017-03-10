@@ -3,7 +3,7 @@
 <script src="/js/bootstrap.js" type="text/javascript"></script>
 <%if(session.loginUserId){%>
 <script>
-  var sessUser = <%=session.loginUserId%>;
+  var sessUser = <%=(session.loginUserId)?session.loginUserId:-1%>;
   var curr_trade = -1;
   var curr_offer = -1;
 </script>

@@ -1,0 +1,42 @@
+<div class='row'>
+  <div class='col-md-12'>
+    <div class='row'>
+    <% if(tradeHistory.length != 0){
+        for(var i = 0;i < tradeHistory.length;i++){
+            var trade = tradeHistory[i];
+          %>
+
+      <div class="item  col-md-3 col-lg-3 text-center">
+           <div class="thumbnail">
+               <a href='/item/<%=trade.item_id%>'>
+                 <img class="group list-group-image" src='/img/item_pics/<%=trade.item_id%>' onerror="this.src='/img/item_pics/default'" />
+               </a>
+               <div class="caption">
+                   <a href='/item/<%=trade.item_id%>'>
+                     <h4 class="group inner list-group-item-heading">
+                       <%=trade.itemName%>
+                     </h4>
+                    </a>
+                    <p class="group inner list-group-item-text">
+                       <%=new Date(trade.dateSent).toDateString();%>
+                    </p>
+                   <div class="row">
+                       <div class="col-md-12">
+                           <p class="lead">
+                             <%=(trade.trader_id == user.id)?"RECEIVED":"TRADED"%></br>
+                            </p>
+                            <button class='btn btn-primary viewFullTrade' data-id="<%=trade.trade_id%>">View Full Trade</button>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+
+
+    <%
+      }
+    }%>
+
+    </div>
+  </div>
+</div>

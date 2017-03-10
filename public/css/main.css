@@ -16,6 +16,12 @@ body{
     font-family: righteous !important;
     font-weight: bolder;
 }
+#searchContainer{
+  margin-top: 200px;
+}
+#mainSearchResults{
+  display: none;
+}
 .pre{
   white-space:pre;
 }

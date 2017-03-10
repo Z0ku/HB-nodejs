@@ -23,7 +23,10 @@
           <%switch(tab){
             case 0:break;
             case 1:%>
-            <% include comp/collectionsView.ejs %>
+              <% include comp/collectionsView.ejs %>
+            <%break;
+            case 2:%>
+            <% include comp/tradeHistory.ejs %>
             <%break;
           }%>
         </div>

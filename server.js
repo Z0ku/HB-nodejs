@@ -41,7 +41,7 @@ app.engine('html', require('ejs').renderFile);
 //app.use(session({secret: 'ssshhhhh'}));
 //console.log(session);
 var pool = mysql.createPool({
-  connectionLimit : 100,
+  connectionLimit : 150,
   host     : 'localhost',
   user     : 'root',
   password : '',
@@ -106,7 +106,7 @@ function exists(query,table,res,callback){
                }
            }else{
 
-             console.log("SELECT * FROM "+table+" WHERE "+cond);
+      //       console.log("SELECT * FROM "+table+" WHERE "+cond);
              return callback(false);
            }
          })
@@ -127,8 +127,32 @@ function getQueryData(query,table,col,res,callback){
                if(rows.length <= 0){
                  return callback(false);
                }else{
+        //         console.log("SELECT "+col+" FROM "+table+" WHERE "+cond);
+
                  return callback(rows);
                }
+           }else{
+             console.log(err);
+             console.log("SELECT "+col+" FROM "+table+" WHERE "+cond);
+             return callback(false);
+           }
+         });
+     }else{
+       console.log(err);
+       return callback(false);
+     }
+  });
+}
+function deleteCol(query,table,res,callback){
+  pool.getConnection(function(err,connection){
+     if(!err){
+      //  console.log('connected as id ' + connection.threadId);
+       var cond = makeConditions(query,connection);
+       connection.query("DELETE FROM "+table+" WHERE "+cond,function(err,data){
+           connection.release();
+           if(!err){
+               return callback(data);
+
            }else{
              console.log(err);
              return callback(false);
@@ -191,8 +215,11 @@ function update(query,table,conds,callback){
            connection.release();
            if(err){
              console.log(err);
+             console.log("UPDATE "+table+" SET "+vals+" WHERE "+cond);
              return callback(false);
            }else{
+        //     console.log("UPDATE "+table+" SET "+vals+" WHERE "+cond);
+
              return callback(result);
            }
          });
@@ -277,7 +304,17 @@ app.get('/users/:id/collections',function(req,res){
     }
   });
 });
-var fullTradeData = "trades.trade_id,trades.user_id as trader_id,trades.item_id,trades.tradeStatus"+
+app.get('/users/:id/tradehistory',function(req,res){
+  var user = {user_id:req.params.id};
+  getQueryData(user,'users','user_id,username',res,function(data){
+    var conds = "WHERE (trades.user_id="+data[0].user_id+" OR collections.user_id="+data[0].user_id+") AND trades.tradeStatus='Completed'"
+    getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(tradeOffers){
+      res.render('profile',{session:req.session,tab:2,user:{name:data[0].username,id:data[0].user_id},tradeHistory:tradeOffers});
+    });
+  });
+});
+
+var fullTradeData = "trades.trade_id,trades.user_id as trader_id,trades.item_id,trades.tradeStatus,trades.dateSent"+
                     ",items.itemName,collections.user_id as owner_id"+
                     ",collections.collName,trader.username as traderName"+
                     ",owner.username as ownerName "+
@@ -443,7 +480,8 @@ app.post('/acceptTrade',function(req,res){
   form.parse(req, function(err, fields, files){
     update({tradeStatus:'Currently Trading'},"trades",{trade_id:fields.trade_id},function(updateCheck){
       if(updateCheck){
-          var newTradeStatus = {trade_id:fields.trade_id,
+          var newTradeStatus = {
+                                trade_id:fields.trade_id,
                                 ownerStatus:'Not Received',
                                 traderStatus:'Not Received'
                                };
@@ -493,11 +531,51 @@ app.get('/tradeOptions',function(req,res){
 
 app.get('/confirmReceive',function(req,res){
   var conds = "WHERE tradingStatus.trade_id = "+req.query.trade_id;
-  getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(trade){
+  getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData+',trades.tradeQuantity',function(trade){
     var query = (req.session.loginUserId == trade[0].trader_id)?{'traderStatus':'Received'}:{'ownerStatus':'Received'};
      update(query,"tradingStatus",req.query,function(updateCheck){
-       res.send('Confirmed');
+       if(updateCheck){
+         if(trade[0].traderStatus == 'Received' || trade[0].ownerStatus == 'Received'){
+           query = {item_id:trade[0].item_id};
+           getQueryData(query,"items","quantity",res,function(itemQuant){
+            //  console.log(itemQuant[0]);
+             var quant = itemQuant[0].quantity;
+             var tradeQuant = trade[0].tradeQuantity;
+            //  console.log(trade);
+             var newQuant = quant - tradeQuant;
+             update({quantity:newQuant},"items",{item_id:trade[0].item_id},function(check){
+
+             });
+          });
+           getQueryData({trade_id:req.query.trade_id},"tradeItems","item_id,itemQuant",res,function(tradeItems){
+             for(var i = 0;i < tradeItems.length;i++){
+               var tradeItem = tradeItems[i];
+               getQueryData({item_id:tradeItem.item_id},"items","quantity",res,function(data){
+                 var quant = data[0].quantity;
+                 var tradeQuant = tradeItem.itemQuant;
+                 query = {item_id:tradeItem.item_id};
+                 update({quantity:(quant - tradeQuant)},"items",query,function(check){
+                   console.log(check);
+                 });
+               });
+              }
+             });
+          update({tradeStatus:'Completed'},"trades",{trade_id:req.query.trade_id},function(data){
+            res.send("Trade Complete");
+
+          });
+       }else{
+         res.send('Confirmed');
+       }
+     }
      });
+  });
+});
+app.get('/cancelOffer',function(req,res){
+  deleteCol(req.query,"trades",res,function(check){
+    if(check.affectedRows > 0){
+      res.send('Offer Canceled');
+    }
   });
 });
 app.get('/cancelTrade',function(req,res){
@@ -505,6 +583,12 @@ app.get('/cancelTrade',function(req,res){
   getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(trade){
     var query = (req.session.loginUserId == trade[0].trader_id)?{'traderStatus':'Canceled'}:{'ownerStatus':'Canceled'};
      update(query,"tradingStatus",req.query,function(updateCheck){
+       if(trade[0].traderStatus == 'Canceled' || trade[0].ownerStatus == 'Canceled'){
+         query = {trade_id:req.query.trade_id};
+         deleteCol(query,"tradeItems",res,function(data){});
+         deleteCol(query,"tradingStatus",res,function(data){});
+         deleteCol(query,"trades",res,function(data){});
+       }
        res.send('Trade Canceled');
      });
   });
@@ -528,4 +612,4 @@ app.get('/trades',function(req,res){
     res.redirect('/login');
   }
 });
-app.listen(80);
+app.listen(85);
