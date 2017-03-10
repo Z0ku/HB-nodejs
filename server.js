@@ -54,14 +54,7 @@ function md5HashString(str){
   md5HashSum.update(str);
   return md5HashSum.digest('hex');
 }
-function checkConn(err,connection,callback){
-  if (err) {
-    res.json({"code" : 100, "status" : "Error in connection database"});
-    return false;
-  }
-  console.log('connected as id ' + connection.threadId);
-  return true;
-}
+
 function makeConditions(query,connection){
   var cond = "";
   var condArr = [];
@@ -101,7 +94,7 @@ function makeJoinConditions(query,connection){
 function exists(query,table,res,callback){
   pool.getConnection(function(err,connection){
      if(!err){
-       console.log('connected as id ' + connection.threadId);
+  //     console.log('connected as id ' + connection.threadId);
        var cond = makeConditions(query,connection);
        connection.query("SELECT * FROM "+table+" WHERE BINARY "+cond,function(err,rows){
            connection.release();
@@ -126,7 +119,7 @@ function exists(query,table,res,callback){
 function getQueryData(query,table,col,res,callback){
   pool.getConnection(function(err,connection){
      if(!err){
-       console.log('connected as id ' + connection.threadId);
+      //  console.log('connected as id ' + connection.threadId);
        var cond = makeConditions(query,connection);
        connection.query("SELECT "+col+" FROM "+table+" WHERE "+cond,function(err,rows){
            connection.release();
@@ -150,7 +143,7 @@ function getQueryData(query,table,col,res,callback){
 function getQueryDataJoin(query,cond,table,col,callback){
   pool.getConnection(function(err,connection){
     if(!err){
-      console.log('connected as id ' + connection.threadId);
+      // console.log('connected as id ' + connection.threadId);
       var J = makeJoinConditions(query,connection);
       connection.query("SELECT "+col+" FROM "+table+""+J+cond,function(err,rows){
         if(err){
@@ -171,7 +164,7 @@ function getQueryDataJoin(query,cond,table,col,callback){
 function insertFull(query,table,res,callback){
   pool.getConnection(function(err,connection){
      if(!err){
-       console.log('connected as id ' + connection.threadId);
+      //  console.log('connected as id ' + connection.threadId);
        var vals = makeValues(query);
        connection.query("INSERT INTO "+table+" VALUES("+vals+")",function(err,result){
            connection.release();
@@ -191,7 +184,7 @@ function insertFull(query,table,res,callback){
 function update(query,table,conds,callback){
   pool.getConnection(function(err,connection){
      if(!err){
-       console.log('connected as id ' + connection.threadId);
+  //     console.log('connected as id ' + connection.threadId);
        var vals = makeConditions(query,connection);
        var cond = makeConditions(conds,connection);
        connection.query("UPDATE "+table+" SET "+vals+" WHERE "+cond,function(err,result){
@@ -487,13 +480,32 @@ app.get('/tradeOffer',function(req,res){
     res.redirect('/login');
   }
 });
+app.get('/tradeOptions',function(req,res){
+  var conds = "WHERE trades.trade_id = "+req.query.trade_id;
+  getQueryDataJoin(fullTradeQuery,conds,"trades",fullTradeData,function(trade){
+    if(trade.length != 0){
+      res.render('comp/tradeOptions',{session:req.session,trade:trade[0]});
+    }else{
+      res.send('DELETED');
+    }
+  });
+});
 
 app.get('/confirmReceive',function(req,res){
   var conds = "WHERE tradingStatus.trade_id = "+req.query.trade_id;
   getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(trade){
     var query = (req.session.loginUserId == trade[0].trader_id)?{'traderStatus':'Received'}:{'ownerStatus':'Received'};
      update(query,"tradingStatus",req.query,function(updateCheck){
-       res.send('success');
+       res.send('Confirmed');
+     });
+  });
+});
+app.get('/cancelTrade',function(req,res){
+  var conds = "WHERE trades.trade_id = "+req.query.trade_id;
+  getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(trade){
+    var query = (req.session.loginUserId == trade[0].trader_id)?{'traderStatus':'Canceled'}:{'ownerStatus':'Canceled'};
+     update(query,"tradingStatus",req.query,function(updateCheck){
+       res.send('Trade Canceled');
      });
   });
 });

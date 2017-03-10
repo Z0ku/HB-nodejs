@@ -46,6 +46,25 @@ $('#userItemSearch').on('keyup',function(){
   }
 });
 
+setInterval(function(){
+  $('.tradeOptions').each(function(){
+    var trade_id = $(this).data('id');
+    var T = $(this);
+    $.ajax({
+      url:'/tradeOptions',
+      type: "GET",
+      data:{trade_id:trade_id},
+      success: function(data){
+        if(data !== "DELETED"){
+          T.parent().html(data);
+        }else{
+          T.parent().parent().remove();
+        }
+      }
+    });
+  });
+},3000);
+
 $("#sendTradeOffer").on('click',function(){
   var tradeData;
   tradeData = [7];
@@ -89,6 +108,7 @@ $('.offerBtn').on('click',function(){
     }
   })
 });
+
 $(document).on('click','#acceptTrade',function(){
   $.ajax({
     url:'/acceptTrade',
@@ -119,4 +139,16 @@ $(document).on('click','.confirm',function(){
         alert(data);
       }
     });
+});
+$(document).on('click','.cancelTrade',function(){
+  if(confirm('Are you sure you wish to cancel this trade?')){
+      $(this).parent().parent().remove();
+      var id = $(this).data('id');
+      $.ajax({
+        url:'/cancelTrade',
+        type: 'GET',
+        dataType: 'json',
+        data: {trade_id:id}
+      });
+    }
 });

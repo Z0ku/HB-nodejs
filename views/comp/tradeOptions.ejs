@@ -1,0 +1,27 @@
+
+<div class='tradeOptions' data-id='<%=trade.trade_id%>'>
+  <%
+  var user = false;
+  var userStatus = false;
+  if(trade.trader_id == session.loginUserId || trade.owner_id == session.loginUserId ){
+     user = (trade.trader_id == session.loginUserId)?trade.trader_id:trade.owner_id;
+     userStatus = (trade.trader_id == session.loginUserId)?trade.traderStatus:trade.ownerStatus;
+  }
+  if(user && trade.tradeStatus == 'Currently Trading'){
+
+      if(trade.ownerStatus != 'Canceled' && trade.traderStatus != 'Canceled'){
+        var check = "glyphicon glyphicon-ok";
+        %>
+        <button data-id='<%=trade.trade_id%>' class='btn btn-success confirm' <%=(userStatus == 'Received')?'disabled':'';%>>Received<span class='<%=(userStatus == 'Received')?check:'';%>'></span></button>
+        <button data-id='<%=trade.trade_id%>' class='btn btn-danger cancelTrade' <%=(trade.traderStatus == 'Received' || trade.ownerStatus == 'Received')?'disabled':'';%>>Cancel</button>
+      <%}else{%>
+        <button data-id='<%=trade.trade_id%>' class='btn btn-danger cancelTrade'>Remove</button>
+      <%}%>
+  <%}%>
+  <button class='btn btn-primary offerBtn' data-id='<%=trade.trade_id%>' data-toggle="modal" data-target="#viewOffer">View Offer</button>
+  <% if(trade.trader_id == session.loginUserId && trade.tradeStatus == 'Offer'){%>
+    <button class='btn btn-danger cancelOffer' data-id='<%=trade.trade_id%>' data-toggle="modal">Cancel</button>
+  <%}%>
+  <br>
+  <h5>(<%=(trade.ownerStatus == 'Canceled' || trade.traderStatus == 'Canceled')?"Canceled":trade.tradeStatus%>)</h5>
+</div>
