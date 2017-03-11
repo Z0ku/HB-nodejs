@@ -17,11 +17,13 @@ String.prototype.replaceAll = function(search, replacement) {
   var target = this;
   return target.split(search).join(replacement);
 };
-$('.loader').bind('ajaxStart', function(){
-    $(this).show();
-}).bind('ajaxStop', function(){
-    $(this).hide();
-});
+// $(document).ready(function () {
+//     $(document).ajaxStart(function () {
+//         $("#loading").show();
+//     }).ajaxStop(function () {
+//         $("#loading").hide();
+//     });
+// });
 var userSearchThread;
 $('#userItemSearch').on('keyup',function(){
 
@@ -56,6 +58,14 @@ $('#mainSearchBar').on('keypress',function(){
           'margin-top': '25px'
       },200);
       title.hide();
+      $.ajax({
+        url:'/search',
+        type: "GET",
+        data: {q:searchVal},
+        success :function(results){
+          $('#mainSearchResults').html(results);
+        }
+      });
       $('#mainSearchResults').show();
     }else{
       $('#searchContainer').animate({

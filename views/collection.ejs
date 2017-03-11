@@ -26,6 +26,10 @@
       </h5>
       <p class='collDesc pre'><%=collData.collDesc%></p>
     </div>
+
+    <% if(collData.user_id == session.loginUserId){%>
+      <% include comp/newItemForm.ejs %>
+    <%}%>
     <% include comp/itemsView.ejs %>
   </div>
   <% if(itemData.user_id !== session.loginUserId){%>

@@ -25,6 +25,16 @@ body{
 .pre{
   white-space:pre;
 }
+#loading{
+  position: absolute;
+  width: 100%;
+  top: 200px;
+  z-index: 10000;
+}
+#loading img{
+  height: 200px !important;
+  width: 200px !important;
+}
 .loader {
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */

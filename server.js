@@ -175,7 +175,7 @@ function getQueryDataJoin(query,cond,table,col,callback){
           console.log("SELECT "+col+" FROM "+table+""+J+cond);
           return callback(false);
         }else{
-        //  console.log("SELECT "+col+" FROM "+table+""+J+cond);
+          console.log("SELECT "+col+" FROM "+table+""+J+cond);
           return callback(rows);
         }
       });
@@ -304,15 +304,7 @@ app.get('/users/:id/collections',function(req,res){
     }
   });
 });
-app.get('/users/:id/tradehistory',function(req,res){
-  var user = {user_id:req.params.id};
-  getQueryData(user,'users','user_id,username',res,function(data){
-    var conds = "WHERE (trades.user_id="+data[0].user_id+" OR collections.user_id="+data[0].user_id+") AND trades.tradeStatus='Completed'"
-    getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(tradeOffers){
-      res.render('profile',{session:req.session,tab:2,user:{name:data[0].username,id:data[0].user_id},tradeHistory:tradeOffers});
-    });
-  });
-});
+
 
 var fullTradeData = "trades.trade_id,trades.user_id as trader_id,trades.item_id,trades.tradeStatus,trades.dateSent"+
                     ",items.itemName,collections.user_id as owner_id"+
@@ -332,6 +324,17 @@ var fullTradeQuery = [
   ["LEFT JOIN ","tradingStatus", "J"],
   ["trades.trade_id","tradingStatus.trade_id","C"],
 ];
+
+app.get('/users/:id/tradehistory',function(req,res){
+  var user = {user_id:req.params.id};
+  getQueryData(user,'users','user_id,username',res,function(data){
+    var conds = "WHERE (trades.user_id="+data[0].user_id+" OR collections.user_id="+data[0].user_id+") AND trades.tradeStatus='Completed'"
+    getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(tradeOffers){
+      res.render('profile',{session:req.session,tab:2,user:{name:data[0].username,id:data[0].user_id},tradeHistory:tradeOffers});
+    });
+  });
+});
+
 app.get('/collection/:collId',function(req,res){
   var query = [['JOIN','users',"J"],['users.user_id','collections.user_id',"C"]];
   var collId = parseInt(req.params.collId);
@@ -401,6 +404,15 @@ app.post('/addCollection',function (req, res){
         }
       });
     });
+});
+app.get('/search',function(req,res){
+  var query = mysql.format("?","%"+req.query.q+"%");
+  var cond = " WHERE ( LOWER(items.itemName) "+
+               "LIKE LOWER("+query+") OR LOWER(items.itemType) "+
+               "LIKE LOWER("+query+") )"
+  getQueryDataJoin([],cond,"items","*",function(data){
+    res.render('comp/searchResults',{session:req.session,I:data});
+  });
 });
 app.post('/addItem',function(req,res){
   var form = new formidable.IncomingForm();
@@ -612,4 +624,4 @@ app.get('/trades',function(req,res){
     res.redirect('/login');
   }
 });
-app.listen(85);
+app.listen(80);
