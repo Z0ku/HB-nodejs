@@ -1,0 +1,32 @@
+<%
+if(users.length !== 0){
+  for(var i = 0;i < users.length;i++){
+    var user = users[i];
+    %>
+
+  <div class="item  col-md-3 col-lg-3 text-center">
+       <div class="thumbnail">
+           <a href='/users/<%=user.user_id%>'>
+             <img class="group list-group-image" src='/img/profile_pics/<%=user.user_id%>' onerror="this.src='/img/item_pics/default'" />
+           </a>
+           <div class="caption">
+               <a href='/users/<%=user.user_id%>'>
+                 <h4 class="group inner list-group-item-heading">
+                   <%=user.username%>
+                 </h4>
+                </a>
+               <div class="row">
+                   <div class="col-md-12">
+
+                        <%if(user.user_id != session.loginUserId){%>
+                          <button class='btn btn-primary btn-success addFriend' data-id="<%=user.user_id%>">Add Friend</button>
+                        <%}%>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+<%}
+}else{%>
+  <h4 class='text-center'>No Users Found.</h4>
+<%}%>

@@ -28,8 +28,19 @@
     <p class='lead'>
       $<%=(itemData.tradePrice)?itemData.tradePrice.toFixed(2).toLocaleString():"N/A"%>
     </p>
-    <% if(itemData.user_id !== session.loginUserId){%>
+    <%
+    if(itemData.itemStatus == 'Active'){
+      if(itemData.user_id !== session.loginUserId){%>
         <% include tradeButtons.ejs%>
-    <%}%>
+    <%}else{%>
+        <button class='btn btn-danger delItem' data-id='<%=itemData.item_id%>'>Delete this Item</button>
+    <%}
+  }else{%>
+    <div class='bg-danger'>
+      <p class='text-danger'>
+        This item has been removed.
+      </p>
+    </div>
+  <%}%>
   </div>
 </div>

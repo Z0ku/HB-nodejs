@@ -23,6 +23,9 @@
           <%switch(tab){
             case 0:break;
             case 1:%>
+            <%if(user.name == session.loginUser){%>
+              <% include comp/newCollForm.ejs %>
+            <%}%>
               <% include comp/collectionsView.ejs %>
             <%break;
             case 2:%>

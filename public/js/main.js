@@ -48,10 +48,11 @@ $('#userItemSearch').on('keyup',function(){
   }
 });
 var mainSearchInterval;
-$('#mainSearchBar').on('keypress',function(){
+$('#mainSearchBar').on('keyup',function(){
   clearInterval(mainSearchInterval);
   var searchVal = $(this).val();
   var title = $(this).parent().siblings('h2');
+  $('#mainSearchResults').html("");
   mainSearchInterval = setTimeout(function(){
     if(searchVal !== ""){
       $('#searchContainer').animate({
@@ -175,6 +176,20 @@ $(document).on('click','.cancelOffer',function(){
       }
     });
     $(this).parent().parent().parent().remove();
+  }
+});
+$('.delItem').on('click',function(){
+  if(confirm("Are you sure you wish to delete this item from your colletion?")){
+    var id = $(this).data('id');
+    $.ajax({
+      url: '/deleteItem',
+      type: 'POST',
+      data: {item_id:id},
+      success: function(response){
+        alert(response);
+        window.location.href = window.location.href;
+      }
+    });
   }
 });
 $(document).on('click','.cancelTrade',function(){

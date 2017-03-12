@@ -15,19 +15,24 @@ function upload(input,type){
 }
 function uploadPic(input,img,id){
   var files = $(input).get(0).files;
-  var formData = new FormData();
-  formData.append(id,files[0],files[0].name);
-  $.ajax({
-    url: '/upload',
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    success: function(data){
-        console.log('upload successful!');
-        $(img).prop('src', id+ '?' + Math.random());
-    }
-  });
+  if(files[0].type.split('/')[0] == 'image'){
+    var formData = new FormData();
+    formData.append(id,files[0],files[0].name);
+    $.ajax({
+      url: '/upload',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(data){
+          console.log('upload successful!');
+          $(img).prop('src', id+ '?' + Math.random());
+      }
+    });
+  }else{
+    alert("File is not an image.");
+  }
+
 }
 function uploadBackPic(input,id){
   var files = $(input).get(0).files;

@@ -1,21 +1,29 @@
-<%if(user.name == session.loginUser){%>
-  <% include newCollForm.ejs %>
-<%}%>
 
-<%for(var i = 0; i < colls.length;i++){
-  var C = colls[i];
-  %>
-  <a href='/collection/<%=C.coll_id%>' class='collLink'>
-    <div class='col-md-12 text-left collCont'>
-      <div class='row'>
-        <div class='col-md-3 collPic'>
-          <img src='/img/collection_pics/<%=C.coll_id%>' onerror="this.src='/img/collection_pics/default.png'">
-        </div>
-        <div class='col-md-9' style='background:url("/img/collectionBack_pics/<%=C.coll_id%>"),url("/img/collectionBack_pics/default.jpg")'>
-          <h4><%=C.collName%></h4>
-          <p class="collDesc"><%=C.collDesc%></p>
+<%if(colls.length != 0){
+  for(var i = 0; i < colls.length;i++){
+    var C = colls[i];
+    %>
+
+    <a href='/collection/<%=C.coll_id%>' class='collLink'>
+      <div class='col-md-12 text-left collCont'>
+        <div class='row'>
+          <div class='col-md-3 collPic'>
+            <img src='/img/collection_pics/<%=C.coll_id%>' onerror="this.src='/img/collection_pics/default.png'">
+          </div>
+          <div class='col-md-9' style='background:url("/img/collectionBack_pics/<%=C.coll_id%>"),url("/img/collectionBack_pics/default.jpg")'>
+            <h4><%=C.collName%></h4>
+            <p class="collDesc"><%=C.collDesc%></p>
+            <%if(C.username){%>
+              <a href='/users/<%=C.user_id%>'>
+                <h4>BY: <%=C.username%></h4>
+              </a>
+            <%}%>
+          </div>
         </div>
       </div>
-    </div>
-  </a>
+    </a>
+  <%}
+
+}else{%>
+  <h4 class='text-center'>No Collections Found.</h4>
 <%}%>

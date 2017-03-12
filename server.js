@@ -70,7 +70,7 @@ function makeValues(query){
   var vals = [];
   var i = 0;
   for(var key in query){
-    vals[i] = mysql.format('?',query[key]);
+    vals[i] = (query[key] == '')?'null':mysql.format('?',query[key]);
     i++;
   }
   return vals.join(',');
@@ -175,7 +175,7 @@ function getQueryDataJoin(query,cond,table,col,callback){
           console.log("SELECT "+col+" FROM "+table+""+J+cond);
           return callback(false);
         }else{
-          console.log("SELECT "+col+" FROM "+table+""+J+cond);
+        //  console.log("SELECT "+col+" FROM "+table+""+J+cond);
           return callback(rows);
         }
       });
@@ -381,6 +381,27 @@ app.get('/confirmUser',function(req,res){
 app.post('/upload',function (req, res){
   uploadFile(req,res);
 });
+app.post('/deleteItem',function(req,res){
+  var form = new formidable.IncomingForm();
+  form.parse(req,function(err,fields,files){
+    update({itemStatus:'Deleted'},'items',fields,function(data){
+      if(data.affectedRows == 1){
+        update({tradeStatus:'Declined'},"trades",{item_id:fields.item_id,tradeStatus:'Offer'},function(check){});
+        getQueryData(fields,'tradeItems','trade_id',res,function(trades){
+          for(var i = 0;i < trades.length;i++){
+            update({tradeStatus:'Declined'},"trades",{trade_id:trades[i].trade_id,tradeStatus:'Offer'},function(trade){});
+          }
+        });
+        res.send('This item has been deleted.');
+      }else{
+        res.send('Error when Deleting this Item.');
+      }
+    });
+  });
+});
+app.post('/deleteCollection',function(){
+
+});
 app.post('/addCollection',function (req, res){
   var form = new formidable.IncomingForm();
   form.uploadDir = path.join(__dirname, '/public/img/collection_pics/');
@@ -407,11 +428,27 @@ app.post('/addCollection',function (req, res){
 });
 app.get('/search',function(req,res){
   var query = mysql.format("?","%"+req.query.q+"%");
-  var cond = " WHERE ( LOWER(items.itemName) "+
+  var cond = " WHERE items.itemStatus=\"Active\" AND ( LOWER(items.itemName) "+
                "LIKE LOWER("+query+") OR LOWER(items.itemType) "+
-               "LIKE LOWER("+query+") )"
-  getQueryDataJoin([],cond,"items","*",function(data){
-    res.render('comp/searchResults',{session:req.session,I:data});
+               "LIKE LOWER("+query+") ) ORDER BY items.itemName ASC";
+  var join = [
+    ["JOIN","collections","J"],
+    ["collections.coll_id","items.coll_id","C"]
+  ];
+
+  getQueryDataJoin(join,cond,"items","items.*,collections.user_id",function(items){
+    join = [
+      ["JOIN","users","J"],
+      ["collections.user_id","users.user_id","C"]
+    ];
+    cond = "WHERE LOWER(collections.collName) LIKE LOWER("+query+") ORDER BY collections.collName ASC";
+    getQueryDataJoin(join,cond,"collections","collections.*,users.username",function(colls){
+      cond = "WHERE LOWER(username) LIKE LOWER("+query+")";
+      getQueryDataJoin([],cond,"users","*",function(users){
+        res.render('comp/searchResults',{session:req.session,I:items,colls:colls,users:users});
+      });
+    });
+
   });
 });
 app.post('/addItem',function(req,res){
@@ -624,4 +661,4 @@ app.get('/trades',function(req,res){
     res.redirect('/login');
   }
 });
-app.listen(80);
+app.listen(81);

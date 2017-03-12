@@ -16,6 +16,9 @@ body{
     font-family: righteous !important;
     font-weight: bolder;
 }
+.item{
+  float:left !important;
+}
 #searchContainer{
   margin-top: 200px;
 }
@@ -47,10 +50,11 @@ body{
     z-index: 100;
     animation: spin 2s linear infinite;
 }
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.bg-danger{
+   border: 4px solid #f44242;
+   border-radius: 10px;
+   padding-left: 15px;
+   padding-right: 15px;
 }
 a{
   color:#292423;
@@ -212,6 +216,9 @@ img{
   height: 200px;
   padding-left: 15px;
   padding-right: 15px;
+}
+.mainCont{
+  min-height: 500px;
 }
 .collDesc{
   color: #847577;
