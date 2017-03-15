@@ -48,7 +48,11 @@ var pool = mysql.createPool({
   database : 'hb_db',
   debug    :  false
 });
-
+var keys = {
+  items : 'item_id',
+  users : 'user_id',
+  trades : 'trade_id'
+}
 function md5HashString(str){
   var md5HashSum = crypto.createHash('md5');
   md5HashSum.update(str);
@@ -60,7 +64,7 @@ function makeConditions(query,connection){
   var condArr = [];
   var i = 0;
   for(var key in query){
-    condArr[i] = connection.format(" ?? = ? ",[key,query[key]]);
+    condArr[i] = (query[key] == '')?key+'= null':connection.format(" ?? = ? ",[key,query[key]]);
     i++;
   }
   cond = condArr.join('AND ');
@@ -248,7 +252,8 @@ function uploadFile(req,res){
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
   form.on('file', function(field, file) {
-  fs.rename(file.path, path.join(form.uploadDir,field));
+    // console.log(file);
+    fs.rename(file.path, path.join(form.uploadDir,field));
   });
 
   // log any errors that occur
@@ -282,19 +287,19 @@ app.get('/logout',function(req,res){
 });
 app.get('/users/:id',function(req,res){
   var user = {user_id:req.params.id};
-  getQueryData(user,"users",'user_id,username',res,function(data){
-    res.render('profile',{session:req.session,tab:0,user:{name:data[0].username,id:data[0].user_id}});
+  getQueryData(user,"users",'*',res,function(data){
+    res.render('profile',{session:req.session,tab:0,user:data[0]});
   });
 });
 app.get('/users/:id/collections',function(req,res){
   var user = {user_id:req.params.id};
-  getQueryData(user,'users','user_id,username',res,function(data){
+  getQueryData(user,'users','*',res,function(data){
     if(data){
       var query = [['LEFT JOIN','items',"J"],['collections.coll_id','items.coll_id',"C"]];
       getQueryDataJoin(query,"WHERE collections.user_id="+req.params.id+" GROUP BY collections.coll_id",'collections','collections.*,count(items.item_id) as itemCount',
                        function(collection){
         if(collection){
-          res.render('profile',{session:req.session,tab:1,user:{name:data[0].username,id:data[0].user_id},colls:collection});
+          res.render('profile',{session:req.session,tab:1,user:data[0],colls:collection});
         }else{
           res.send("ERROR");
         }
@@ -327,10 +332,10 @@ var fullTradeQuery = [
 
 app.get('/users/:id/tradehistory',function(req,res){
   var user = {user_id:req.params.id};
-  getQueryData(user,'users','user_id,username',res,function(data){
-    var conds = "WHERE (trades.user_id="+data[0].user_id+" OR collections.user_id="+data[0].user_id+") AND trades.tradeStatus='Completed'"
+  getQueryData(user,'users','*',res,function(data){
+    var conds = "WHERE (trades.user_id="+data[0].user_id+" OR collections.user_id="+data[0].user_id+") AND trades.tradeStatus='Completed' ORDER BY trades.dateSent DESC"
     getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(tradeOffers){
-      res.render('profile',{session:req.session,tab:2,user:{name:data[0].username,id:data[0].user_id},tradeHistory:tradeOffers});
+      res.render('profile',{session:req.session,tab:2,user:data[0],tradeHistory:tradeOffers});
     });
   });
 });
@@ -348,12 +353,22 @@ app.get('/collection/:collId',function(req,res){
   })
 });
 app.get('/item/:id',function(req,res){
-  var item = [['JOIN','collections',"J"],['items.coll_id','collections.coll_id',"C"]];
-  getQueryDataJoin(item,"WHERE items.item_id="+req.params.id,"items","items.*,collections.coll_id as cColl_id,collections.collName as cCollName,collections.user_id as user_id",function(data){
+  var item = [
+  ['JOIN','collections',"J"],
+  ['items.coll_id','collections.coll_id',"C"],
+  ['JOIN','users',"J"],
+  ['collections.user_id','users.user_id',"C"]
+];
+  var id = "WHERE items.item_id="+req.params.id;
+  getQueryDataJoin(item,id,"items","items.*,collections.collName,collections.user_id,users.username",function(data){
     if(data){
-      getQueryData({user_id:data['user_id']},"users","username",res,function(userData){
-        res.render('item',{session:req.session,itemData:data[0],user:userData[0]});
+      getQueryDataJoin(fullTradeQuery,'WHERE trades.item_id = '+req.params.id+" AND trades.tradeStatus = 'Offer' ","trades",fullTradeData,function(itemOffers){
+        getQueryData({user_id:data['user_id']},"users","username",res,function(userData){
+          res.render('item',{session:req.session,itemData:data[0],user:userData[0],itemOffers:itemOffers});
+        });
       });
+    }else{
+      res.end('Error Fetching Item Data.')
     }
   });
 });
@@ -379,7 +394,7 @@ app.get('/confirmUser',function(req,res){
   });
 });
 app.post('/upload',function (req, res){
-  uploadFile(req,res);
+    uploadFile(req,res);
 });
 app.post('/deleteItem',function(req,res){
   var form = new formidable.IncomingForm();
@@ -401,6 +416,19 @@ app.post('/deleteItem',function(req,res){
 });
 app.post('/deleteCollection',function(){
 
+});
+app.post('/update',function(req,res){
+  var form = new formidable.IncomingForm();
+  form.parse(req,function(err,fields,files){
+    var updateData = fields;
+    update(updateData.col,updateData.table,{[keys[updateData.table]]:updateData.id},function(response){
+      if(response.affectedRows == 1){
+        res.send('success');
+      }else{
+        res.send('ERROR');
+      }
+    });
+  });
 });
 app.post('/addCollection',function (req, res){
   var form = new formidable.IncomingForm();
@@ -544,7 +572,7 @@ app.post('/acceptTrade',function(req,res){
   });
 });
 app.get('/tradeOffer',function(req,res){
-  if(req.session.loginUserId){
+//  if(req.session.loginUserId){
     var query = [
       ["JOIN","items","J"],
       ["items.item_id","tradeItems.item_id","C"],
@@ -563,9 +591,9 @@ app.get('/tradeOffer',function(req,res){
         })
       });
     });
-  }else{
-    res.redirect('/login');
-  }
+  //}else{
+    //res.redirect('/login');
+  //}
 });
 app.get('/tradeOptions',function(req,res){
   var conds = "WHERE trades.trade_id = "+req.query.trade_id;
@@ -582,6 +610,7 @@ app.get('/confirmReceive',function(req,res){
   var conds = "WHERE tradingStatus.trade_id = "+req.query.trade_id;
   getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData+',trades.tradeQuantity',function(trade){
     var query = (req.session.loginUserId == trade[0].trader_id)?{'traderStatus':'Received'}:{'ownerStatus':'Received'};
+    if(trade[0].traderStatus != 'Canceled' && trade[0].ownerStatus != 'Canceled'){
      update(query,"tradingStatus",req.query,function(updateCheck){
        if(updateCheck){
          if(trade[0].traderStatus == 'Received' || trade[0].ownerStatus == 'Received'){
@@ -618,6 +647,9 @@ app.get('/confirmReceive',function(req,res){
        }
      }
      });
+   }else{
+     res.send('Trade was already Canceled!');
+   }
   });
 });
 app.get('/cancelOffer',function(req,res){
@@ -631,6 +663,7 @@ app.get('/cancelTrade',function(req,res){
   var conds = "WHERE trades.trade_id = "+req.query.trade_id;
   getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(trade){
     var query = (req.session.loginUserId == trade[0].trader_id)?{'traderStatus':'Canceled'}:{'ownerStatus':'Canceled'};
+    if(trade[0].traderStatus != 'Received' && trade[0].ownerStatus != 'Received'){
      update(query,"tradingStatus",req.query,function(updateCheck){
        if(trade[0].traderStatus == 'Canceled' || trade[0].ownerStatus == 'Canceled'){
          query = {trade_id:req.query.trade_id};
@@ -638,8 +671,12 @@ app.get('/cancelTrade',function(req,res){
          deleteCol(query,"tradingStatus",res,function(data){});
          deleteCol(query,"trades",res,function(data){});
        }
-       res.send('Trade Canceled');
+       res.json({success:'Trade Canceled'});
      });
+   }else{
+
+     res.json({error: 'You cannot cancel this trade since the other user has already received his trade.'});
+   }
   });
 });
 app.get('/trades',function(req,res){

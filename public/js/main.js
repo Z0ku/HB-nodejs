@@ -1,3 +1,11 @@
+var editOptions = {
+  'itemCondition':[
+    'Good',
+    'Acceptable',
+    'Mint',
+    'Worn'
+  ]
+};
 $('.hasEdit').hover(function(){
   $(this).children('.editPic').show();
 },function(){
@@ -49,12 +57,13 @@ $('#userItemSearch').on('keyup',function(){
 });
 var mainSearchInterval;
 $('#mainSearchBar').on('keyup',function(){
-  clearInterval(mainSearchInterval);
+  clearInterval(mainSearchInterval); // reset timer
   var searchVal = $(this).val();
   var title = $(this).parent().siblings('h2');
   $('#mainSearchResults').html("");
-  mainSearchInterval = setTimeout(function(){
+  mainSearchInterval = setTimeout(function(){ // start timer
     if(searchVal !== ""){
+
       $('#searchContainer').animate({
           'margin-top': '25px'
       },200);
@@ -75,7 +84,8 @@ $('#mainSearchBar').on('keyup',function(){
       title.show();
       $('#mainSearchResults').hide();
     }
-  },500);
+  },500); // time before searching
+  
 
 });
 
@@ -124,6 +134,82 @@ $('.offerBtn').on('click',function(){
   })
 });
 
+var valToEdit;
+var inputType;
+$(document).on("dblclick",'.toEdit',function(){
+  $('#editor').parent().html(valToEdit);
+  valToEdit = $(this).text();
+  inputType = $(this).data('type');
+  var vals = "id='editor' class='form-control' ";
+  var editor;
+  var optValues;
+  var finishBtn = '</br></br><button class="btn btn-primary finishEdit">Finish Edit</button> &nbsp;';
+  var cancelBtn = '<button class="btn btn-danger cancelEdit">Cancel</button></br>'
+  if(inputType !== 'textarea' && inputType !== 'select'){
+    editor = "<input type='"+inputType+"' "+vals+" value='"+valToEdit+"'>";
+  }else if(inputType == 'textarea'){
+    editor =  "<"+inputType+" "+vals+" cols='50'>"+valToEdit+"</"+inputType+">";
+  }else if(inputType == 'select'){
+    var options = "";
+    optValues = $(this).data('col');
+    for(var i = 0; i < editOptions[optValues].length;i++){
+      options += "<option value="+editOptions[optValues][i]+">"+editOptions[optValues][i]+"</option>"
+    }
+    editor = "<"+inputType+" "+vals+">"+options+"</"+inputType+">";
+  }
+  $(this).html(editor+finishBtn+cancelBtn);
+});
+$(document).on('click','.cancelEdit',function(){
+  $('#editor').parent().html(valToEdit);
+});
+$(document).on('click','.finishEdit',function(){
+  var newVal = $('#editor').val();
+  var validInput = 1;
+  var col = $('#editor').parent();
+
+  if(inputType == 'number'){
+    newVal = parseInt(newVal);
+    if(isNaN(newVal)){
+      validInput = 0;
+    }
+  }
+  if($('#editor').parent().data('restrict')){
+    var restriction = $('#editor').parent().data('restrict');
+    if(restriction == 'float'){
+      if(newVal.trim() != '' && !$('#editor').hasClass('must-fill')){
+        newVal = parseFloat(newVal);
+        if(isNaN(newVal)){
+          validInput = 0;
+        }
+      }else{
+        newVal = newVal.trim();
+      }
+    }
+  }
+  if($("#editor").parent().hasClass('must-fill') && inputType != 'number' && newVal.trim() == ''){
+    validInput = 0;
+  }
+  if(validInput == 1){
+    var table = $('#editTable').val();
+    var id = $('#editTable').data('id');
+    var toUpdateData = {id:id,table:table,col:{[col.data('col')]:newVal}};
+    $.ajax({
+      url: '/update',
+      type: 'POST',
+      data: JSON.stringify(toUpdateData),
+      contentType: "application/json",
+      context:'#editor',
+      success: function(response){
+        $('#editor').parent().html(newVal);
+      },
+      error: function(response){
+        alert(response);
+      }
+    });
+  }else{
+    alert('Invalid Input');
+  }
+});
 $(document).on('click','#acceptTrade',function(){
   if(confirm('Accept this Offer?')){
     $.ajax({
@@ -158,7 +244,7 @@ $(document).on('click','.confirm',function(){
       context:this,
       success: function(data){
         alert(data);
-        if(data == "Trade Complete"){
+        if(data == "Trade Complete" || data == 'Trade was already Canceled!'){
           $(this).parent().parent().parent().remove();
         }
       }
@@ -195,13 +281,21 @@ $('.delItem').on('click',function(){
 $(document).on('click','.cancelTrade',function(){
   if(confirm('Are you sure you wish to cancel this trade?')){
       var id = $(this).data('id');
-      $(this).parent().parent().parent().remove();
 
       $.ajax({
         url:'/cancelTrade',
         type: 'GET',
         dataType: 'json',
-        data: {trade_id:id}
+        data: {trade_id:id},
+        context: this,
+        success: function(response){
+            alert(response);
+            $(this).parent().parent().parent().remove();
+        },
+        error : function(response){
+          alert('You cannot cancel this trade since the other user has already received his trade.');
+          disableBtn($(this));
+        }
       });
     }
 });

@@ -1,9 +1,14 @@
 <div class='row itemHead'>
   <div class='col-md-5'>
     <div class='row'>
-      <div class='col-md-6 col-md-offset-3 itemHeadPic hasEdit'>
+      <div class='col-md-8 col-md-offset-2 itemHeadPic hasEdit'>
         <img src='/img/item_pics/<%=itemData.item_id%>' onerror="this.src='/img/item_pics/default'">
-        <% if(itemData.user_id == session.loginUserId){%>
+        <%
+          var toEdit = '';
+          if(itemData.user_id == session.loginUserId){
+            toEdit = 'toEdit';
+          %>
+          <input type='hidden' value='items' id='editTable' data-id='<%=itemData.item_id%>'>
           <div class='editPic text-center'>
             <button class='btn btn-primary'>Edit</button>
             <input class='picChange' type='file' style='visibility:hidden' name='/img/item_pics/<%=itemData.item_id%>'>
@@ -12,21 +17,26 @@
       </div>
     </div>
   </div>
-  <div class='col-md-7' >
-    <h1 class='lead'><%=itemData.itemName%></h1>
+  <div class='col-md-7 form-inline' >
+    <h1 class='lead'><span class='<%=toEdit%> must-fill' data-type='text' data-col='itemName'><%=itemData.itemName%></span></h1>
     <p class='itemDetail text-left'>
-      <strong>Type: </strong><%=itemData.itemType%></br>
+      <strong>Type: </strong><span class='<%=toEdit%> must-fill' data-type='text' data-col='itemType'><%=itemData.itemType%></span></br>
       <strong>Condition:</strong>
-      <span class='text-<%=itemConds[itemData.itemCondition]%>'><%=itemData.itemCondition%></span></br>
-      <strong>Quantity: </strong><%=itemData.quantity%></br></br>
-
+      <span class='<%=toEdit%> text-<%=itemConds[itemData.itemCondition]%> must-fill' data-type='select' data-col='itemCondition'><%=itemData.itemCondition%></span></br>
+      <strong>Quantity: </strong><span class='<%=toEdit%> must-fill' data-type='number' data-col='quantity'><%=itemData.quantity%></span></br></br>
+      <%if(itemData.itemStatus == 'Active'){%>
+        Collection: <a href='/collection/<%=itemData.coll_id%>'><%=itemData.collName%></a> by
+        <a href='/users/<%=itemData.user_id%>'><%=itemData.username%></a>
+        <%}%>
     </p>
     <dl>
       <dt>Description:</dt>
-      <dd class='pre'></br><%=itemData.itemDesc%></dd>
+      <dd class='pre'></br><span class='<%=toEdit%> textBox' data-type='textarea' data-col='itemDesc'><%=itemData.itemDesc%></span></dd>
     </dl>
     <p class='lead'>
-      $<%=(itemData.tradePrice)?itemData.tradePrice.toFixed(2).toLocaleString():"N/A"%>
+      $<span class='<%=toEdit%>' data-type='text' data-restrict='float' data-col='tradePrice'>
+        <%=(itemData.tradePrice)?itemData.tradePrice.toFixed(2).toLocaleString():"N/A"%>
+       </span>
     </p>
     <%
     if(itemData.itemStatus == 'Active'){

@@ -116,7 +116,7 @@ $(document).ready(function(){
       $.ajax({
               type: "get",
               url:  "/registerUser",
-              data: {user_id:"",username:$(".newUsername").val(),password:$(".confirmPass").val(),email:$(".newEmail").val()}
+              data: {user_id:"",username:$(".newUsername").val(),password:$(".confirmPass").val(),email:$(".newEmail").val(),userDesc:'',userLocation:''},
       })
       window.location.href = "/login";
     }

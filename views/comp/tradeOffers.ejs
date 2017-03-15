@@ -1,8 +1,10 @@
-<% for(var i = 0;i < tradeOffers.length;i++){
-  var trade = tradeOffers[i];
+<%
+  if(tradeOffers.length > 0){
+    for(var i = 0;i < tradeOffers.length;i++){
+      var trade = tradeOffers[i];
   %>
   <% if( trade.tradeStatus != 'Currently Trading' ||
-  (!(trade.trader_id == session.loginUserId && trade.traderStatus == 'Canceled') || !(trade.owner_id == session.loginUserId && trade.ownerStatus == 'Canceled')
+  (!(trade.trader_id == session.loginUserId && trade.traderStatus == 'Canceled') && !(trade.owner_id == session.loginUserId && trade.ownerStatus == 'Canceled')
   )){
 
      %>
@@ -10,8 +12,11 @@
 
     <% if(showItem == true){%>
       <td scope='row' class='largeCell'>
-        <a href='/item/<%=trade.item_id%>'
-          <div class='col-md-12'>
+        <a href='/item/<%=trade.item_id%>'>
+          <div class='col-md-3' style='height:85px'>
+            <img src='/img/item_pics/<%=trade.item_id%>' onerror="this.src='/img/item_pics/default'">
+          </div>
+          <div class='col-md-9'>
             <h4><%=trade.itemName%></h4>
             Collection: <%=trade.collName%>
           </div>
@@ -45,4 +50,9 @@
     </td>
   </tr>
   <%}%>
+<%}
+}else{%>
+  <tr>
+    <td style='width:100%'><p class='text-center'>Nothing here.</p></td>
+  </tr>
 <%}%>

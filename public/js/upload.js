@@ -14,7 +14,9 @@ function upload(input,type){
   });
 }
 function uploadPic(input,img,id){
+
   var files = $(input).get(0).files;
+  console.log(files);
   if(files[0].type.split('/')[0] == 'image'){
     var formData = new FormData();
     formData.append(id,files[0],files[0].name);

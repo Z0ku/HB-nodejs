@@ -1,5 +1,9 @@
 <div class='col-md-12 profileBack hasEdit'>
-  <% if(user.name == session.loginUser){%>
+  <% var toEdit = '';
+  if(user.username == session.loginUser){
+    toEdit = 'toEdit';
+    %>
+    <input type='hidden' value='users' id='editTable' data-id='<%=session.loginUserId%>'>
     <div class='editPic editBackPic'>
       <button class='btn btn-primary'>Edit Cover Photo</button>
       <input class='backPicChange' type='file' style='visibility:hidden' name='/img/background_pics/<%=session.loginUserId%>'>
@@ -10,8 +14,11 @@
       <div class='col-md-3'>
         <div class='row'>
           <div class='col-md-8 col-md-offset-2  profilePic hasEdit'>
-            <img src='/img/profile_pics/<%=user.id%>' onerror="this.src='/img/profile_pics/default.jpg'">
-          <% if(user.name == session.loginUser){%>
+            <img src='/img/profile_pics/<%=user.user_id%>' onerror="this.src='/img/profile_pics/default.jpg'">
+          <%
+            if(user.user_id == session.loginUserId){
+
+            %>
             <div class='editPic text-center'>
               <button class='btn btn-primary'>Edit</button>
               <input class='picChange' type='file' style='visibility:hidden' name='/img/profile_pics/<%=session.loginUserId%>'>
@@ -21,18 +28,17 @@
       </div>
     </div>
      <div class='col-md-9 profileNav'>
-        <h1><%=user.name%>
-          <% if(user.name !== session.loginUser){%>
+        <h1><%=user.username%>
+          <% if(user.user_id !== session.loginUserId){%>
             <button type='button' class='btn btn-success'>Add Friend</button>
           <%}%>
         </h1>
 
-        <p>User Description</p>
         <div class='profileNavTabs'>
           <ul class="nav nav-tabs">
-            <li role="presentation" ><a href="/users/<%=user.id%>">Feed</a></li>
-            <li role="presentation" ><a href="/users/<%=user.id%>/collections">Collections</a></li>
-            <li role="presentation" ><a href="/users/<%=user.id%>/tradehistory">Trade History</a></li>
+            <li role="presentation" ><a href="/users/<%=user.user_id%>">Feed</a></li>
+            <li role="presentation" ><a href="/users/<%=user.user_id%>/collections">Collections</a></li>
+            <li role="presentation" ><a href="/users/<%=user.user_id%>/tradehistory">Trade History</a></li>
             <li role="presentation"><a href="#">Friends</a></li>
           </ul>
         </div>

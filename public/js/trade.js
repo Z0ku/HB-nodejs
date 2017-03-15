@@ -3,19 +3,25 @@ $('#tradeForm').on('show.bs.modal', function (event) {
   var item_id = button.data('id');
   var modal = $(this);
   curr_trade = item_id;
-  $.ajax({
-    url:'/getItem',
-    type:'GET',
-    data:{item_id,item_id},
-    success: function(data){
-      for(var col in data){
-        modal.find('.'+col).text(data[col]);
+  if(sessUser != -1){
+    $.ajax({
+      url:'/getItem',
+      type:'GET',
+      data:{item_id,item_id},
+      success: function(data){
+        for(var col in data){
+          modal.find('.'+col).text(data[col]);
+        }
+        var itemPic = modal.find('.itemHeadPic').children('img');
+        $(itemPic).attr('src','/img/item_pics/'+item_id+'?'+Math.random());
+        modal.find('#tradeQuantity').attr('max',data.quantity);
       }
-      var itemPic = modal.find('.itemHeadPic').children('img');
-      $(itemPic).attr('src','/img/item_pics/'+item_id+'?'+Math.random());
-      modal.find('#tradeQuantity').attr('max',data.quantity);
-    }
-  });
+    });
+  }else{
+    event.preventDefault();
+    alert('Login or Register to Start Trading.');
+     window.location.href = '/login';
+  }
 });
 $(document).on('click','.addTradeItem',function(){
   var itemId = $(this).data('itemid');

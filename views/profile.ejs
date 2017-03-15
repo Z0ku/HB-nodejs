@@ -6,7 +6,7 @@
    <% include comp/csslinks.ejs %>
    <style>
     .profileBack{
-      background: url("/img/background_pics/<%=user.id%>"),url("/img/background_pics/default.jpeg");
+      background: url("/img/background_pics/<%=user.user_id%>"),url("/img/background_pics/default.jpeg");
       background-size:     cover;                      /* <------ */
       background-repeat:   no-repeat;
       background-position: top;
@@ -21,9 +21,12 @@
       <div class='col-md-10 col-md-offset-1 mainCont'>
         <div class='row'>
           <%switch(tab){
-            case 0:break;
+            case 0:%>
+            <p>Description: <span  class='<%=(user.user_id == session.loginUserId)?'toEdit':''%> textBox' data-type='textarea' data-col='userDesc'><%=user.userDesc%></span></p>
+            <p>Location: <span  class='<%=(user.user_id == session.loginUserId)?'toEdit':''%> textBox' data-type='textarea' data-col='userDesc'><%=user.userLocation%></span></p>
+            <%break;
             case 1:%>
-            <%if(user.name == session.loginUser){%>
+            <%if(user.user_id == session.loginUserId){%>
               <% include comp/newCollForm.ejs %>
             <%}%>
               <% include comp/collectionsView.ejs %>
@@ -39,13 +42,13 @@
 </body>
 </html>
 <% include comp/jslinks.ejs %>
-<%if(user.name == session.loginUser){%>
+<%if(user.user_id == session.loginUserId){%>
   <script type='text/javascript' src='/js/upload.js'></script>
   <% include comp/upload.ejs %>
 <%}%>
 <script>
   $("li[role='presentation']").eq('<%=tab%>').addClass('active');
-  <%if(user.name == session.loginUser){%>
+  <%if(user.user_id == session.loginUserId){%>
       <%switch(tab){
         case 1:%>
           <% include comp/submitNewColl.ejs%>

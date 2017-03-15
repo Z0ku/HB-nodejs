@@ -6,17 +6,39 @@
    <% include comp/csslinks.ejs %>
 </head>
 <body>
-  <% include comp/nav.ejs %>
+  <% include comp/nav.ejs
+
+    var itemOffers = true; %>
   <div class='container-fluid' style='margin-top:40px'>
     <div class='row'>
       <div class='col-md-10 col-md-offset-1'>
         <% include comp/itemHead.ejs%>
+      </div>
+      <div class='col-md-6 col-md-offset-1'>
+        <div class="row">
+          <div class='col-md-12 tableHead'>
+            <h4 class='lead'>Trade Offers:</h4>
+          </div>
+          <table class='table'>
+            <thead>
+              <th class='smallCell'>User</th>
+              <th class='medCell'>Options</th>
+            </thead>
+            <tbody>
+              <% tradeOffers = itemOffers
+                var showItem = false;%>
+              <% include comp/tradeOffers.ejs%>
+
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
   <% if(itemData.user_id !== session.loginUserId){%>
     <% include comp/tradeForm.ejs%>
   <%}%>
+  <% include comp/viewOfferModal.ejs %>
 </body>
 </html>
   <% include comp/jslinks.ejs %>

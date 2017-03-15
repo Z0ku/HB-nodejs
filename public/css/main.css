@@ -19,6 +19,9 @@ body{
 .item{
   float:left !important;
 }
+textarea{
+  resize: vertical;
+}
 #searchContainer{
   margin-top: 200px;
 }
@@ -34,6 +37,13 @@ body{
   top: 200px;
   z-index: 10000;
 }
+.textBox{
+  width: 100%;
+  min-height: 50px;
+  white-space: pre-line;
+  display: inline-block;
+}
+
 #loading img{
   height: 200px !important;
   width: 200px !important;
