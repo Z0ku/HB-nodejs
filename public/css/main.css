@@ -43,6 +43,14 @@ textarea{
   white-space: pre-line;
   display: inline-block;
 }
+.clearBack, .nav-tabs a{
+  color: white;
+  background-color: hsla(352, 6%, 49%, 0.60);
+}
+.clearBack, .nav-tabs a:hover{
+    text-decoration:  none !important;
+    color: white !important;
+}
 
 #loading img{
   height: 200px !important;
@@ -72,9 +80,9 @@ a{
 a:hover{
   color:#120907;
 }
-p{
+/*p{
   color: #847577 !important;
-}
+}*/
 .newCollForm{
   margin-bottom: 20px;
 }
@@ -89,7 +97,7 @@ border-width: medium !important;
   border-right: 2px solid #66290b;
 }
 .profileBack{
-  height:550px;
+  height:450px;
 }
 .tableHead{
   border-bottom:3px solid #847577;
@@ -229,9 +237,6 @@ img{
 }
 .mainCont{
   min-height: 500px;
-}
-.collDesc{
-  color: #847577;
 }
 img{
    width: 100% !important;
@@ -384,4 +389,10 @@ table{
     margin-bottom:15px;
     height:10px !important;
     opacity: 0;
+}
+
+.fav-button{
+  position: absolute;
+  right: 20px;
+  top: 10px;
 }

@@ -10,13 +10,19 @@ i{
     z-index: 1;
 }
 .login-form{
-    margin-top: 200px !important;
+    margin-top: 150px !important;
 }
 /* enable absolute positioning */
 .inner-addon {
     position: relative;
 }
-
+.loginPic{
+  overflow: hidden;
+  width:125px;
+  margin: 0 auto;
+  height: 150px;
+  border-radius: 55px;
+}
 /* style icon */
 .inner-addon .glyphicon {
   position: absolute;

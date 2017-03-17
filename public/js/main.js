@@ -4,6 +4,10 @@ var editOptions = {
     'Acceptable',
     'Mint',
     'Worn'
+  ],
+  'tradeStatus':[
+    'Trading',
+    'Not Trading'
   ]
 };
 $('.hasEdit').hover(function(){
@@ -85,7 +89,7 @@ $('#mainSearchBar').on('keyup',function(){
       $('#mainSearchResults').hide();
     }
   },500); // time before searching
-  
+
 
 });
 
@@ -153,7 +157,7 @@ $(document).on("dblclick",'.toEdit',function(){
     var options = "";
     optValues = $(this).data('col');
     for(var i = 0; i < editOptions[optValues].length;i++){
-      options += "<option value="+editOptions[optValues][i]+">"+editOptions[optValues][i]+"</option>"
+      options += "<option value='"+editOptions[optValues][i]+"' >"+editOptions[optValues][i]+"</option>"
     }
     editor = "<"+inputType+" "+vals+">"+options+"</"+inputType+">";
   }
@@ -210,12 +214,32 @@ $(document).on('click','.finishEdit',function(){
     alert('Invalid Input');
   }
 });
+function acceptTrade(id){
+  $.ajax({
+    url:'/acceptTrade',
+    type:"POST",
+    data:JSON.stringify({trade_id:id}),
+    contentType: "application/json",
+    succes: function(result){
+      alert(result);
+    },
+    error: function(result){
+      alert(result);
+    }
+  });
+  window.location.href =  window.location.href;
+}
 $(document).on('click','#acceptTrade',function(){
   if(confirm('Accept this Offer?')){
+    acceptTrade(curr_offer);
+  }
+});
+$(document).on('click','#declineTrade',function(){
+  if(confirm('Decline this Offer?')){
     $.ajax({
-      url:'/acceptTrade',
+      url:'/declineTrade',
       type:"POST",
-      data:JSON.stringify({trade_id:curr_offer,ownerId:sessUser}),
+      data:JSON.stringify({trade_id:curr_offer}),
       contentType: "application/json",
       succes: function(result){
         alert(result);
@@ -224,7 +248,6 @@ $(document).on('click','#acceptTrade',function(){
         alert(result);
       }
     });
-
     window.location.href =  window.location.href;
   }
 });
@@ -299,3 +322,32 @@ $(document).on('click','.cancelTrade',function(){
       });
     }
 });
+function changeStar(star,action){
+  if(action == 'add'){
+    star.removeClass('glyphicon-star-empty');
+    star.addClass('glyphicon-star');
+    star.parent().data('action','remove');
+  }else{
+    star.removeClass('glyphicon-star');
+    star.addClass('glyphicon-star-empty');
+    star.parent().data('action','add');
+  }
+}
+
+  $(document).on('click','.fav-collections',function(e){
+    e.preventDefault();
+    var favData = {
+      coll_id : $(this).data('id'),
+      user_id : sessUser,
+      action : $(this).data('action'),
+    };
+
+    $.ajax({
+      url:'/favoriteCollection',
+      method:'POST',
+      data:JSON.stringify(favData),
+      contentType: "application/json"
+    });
+    var star = $(this).children('span');
+    changeStar(star,favData.action);
+  });

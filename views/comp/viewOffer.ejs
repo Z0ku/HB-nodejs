@@ -7,7 +7,7 @@
     <h4>Trade Items:</h4>
     <table class='table'>
       <thead>
-        <th>Item Name</th>
+        <th>Item</th>
         <th>Qty</th>
       </thead>
       <tbody>
@@ -20,6 +20,9 @@
           <td>
             <a href='/item/<%=tradeItem.item_id%>'>
               <div class='row'>
+                <div class='col-md-3' style='height:85px'>
+                  <img src='/img/item_pics/<%=tradeItem.item_id%>' onerror="this.src='/img/item_pics/default'">
+                </div>
                 <div class='col-md-9'>
                   <h4><%=tradeItem.itemName%></h4>
                 </div>

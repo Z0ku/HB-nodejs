@@ -39,7 +39,12 @@ and open the template in the editor.
                               </div>
 
                               <div class="item">
+
                                     <div class="d-block img-fluid">
+                                        <!-- <div class='loginPic'>
+                                          <img src='/img/profile_pics/default.jpg' onerror="this.src='/img/profile_pics/default.jpg'">
+                                        </div> -->
+                                        <h3 class='text-center' id='usernameHead'></h3>
                                         <div class="form-group inner-addon left-addon col-md-8 col-md-offset-2 col-form-label has-danger">
                                          <i class="glyphicon glyphicon-ok input-lg"></i>
                                          <input type = "password" name = "password" required placeholder="password" class="pass form-control input-lg form-control-danger req"/>
@@ -68,7 +73,7 @@ and open the template in the editor.
 <% include comp/jslinks.ejs %>
 <script src="js/error.js" type="text/javascript"></script>
 <script type="text/javascript">
-  console.log(document.cookie);
+  // console.log(document.cookie);
     $(document).ready(function(){
         var pass = 0;
         var user = "";
@@ -92,6 +97,8 @@ and open the template in the editor.
                          clearError(E);
                          pass = 1;
                          user = $(".username").val();
+                         $('#usernameHead').html(user);
+                         userId = result;// for login pic
                          $("#myCarousel").carousel('next');
                      }else{
                          showError("Username Not Found",E);

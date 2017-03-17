@@ -1,0 +1,9 @@
+1. Rating System  (1-5)
+2. Messaging
+3. Favorites
+4. Form Checking (Trades & Add Items)
+
+
+Optional/Low Priority
+1. Arrange By
+2. Search

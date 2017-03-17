@@ -14,15 +14,7 @@ if(users.length !== 0){
                  <h4 class="group inner list-group-item-heading">
                    <%=user.username%>
                  </h4>
-                </a>
-               <div class="row">
-                   <div class="col-md-12">
-
-                        <%if(user.user_id != session.loginUserId){%>
-                          <button class='btn btn-primary btn-success addFriend' data-id="<%=user.user_id%>">Add Friend</button>
-                        <%}%>
-                   </div>
-               </div>
+                </a>  
            </div>
        </div>
    </div>

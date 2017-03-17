@@ -28,18 +28,13 @@
       </div>
     </div>
      <div class='col-md-9 profileNav'>
-        <h1><%=user.username%>
-          <% if(user.user_id !== session.loginUserId){%>
-            <button type='button' class='btn btn-success'>Add Friend</button>
-          <%}%>
-        </h1>
+
 
         <div class='profileNavTabs'>
           <ul class="nav nav-tabs">
-            <li role="presentation" ><a href="/users/<%=user.user_id%>">Feed</a></li>
+            <li role="presentation" ><a href="/users/<%=user.user_id%>">Profile</a></li>
             <li role="presentation" ><a href="/users/<%=user.user_id%>/collections">Collections</a></li>
             <li role="presentation" ><a href="/users/<%=user.user_id%>/tradehistory">Trade History</a></li>
-            <li role="presentation"><a href="#">Friends</a></li>
           </ul>
         </div>
     </div>

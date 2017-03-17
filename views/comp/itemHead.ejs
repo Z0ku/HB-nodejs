@@ -34,6 +34,8 @@
       <dd class='pre'></br><span class='<%=toEdit%> textBox' data-type='textarea' data-col='itemDesc'><%=itemData.itemDesc%></span></dd>
     </dl>
     <p class='lead'>
+      You are <span class='<%=toEdit%>' data-type='select' data-col='tradeStatus' style='color:black'><%=itemData.tradeStatus%></span> this item.</br></br>
+
       $<span class='<%=toEdit%>' data-type='text' data-restrict='float' data-col='tradePrice'>
         <%=(itemData.tradePrice)?itemData.tradePrice.toFixed(2).toLocaleString():"N/A"%>
        </span>

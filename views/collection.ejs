@@ -19,9 +19,15 @@
   <div class='col-md-10 col-md-offset-1' style='padding-top:20px'>
     <div class='row collData'>
       <h5 class='lead'>
-        Description:        
+        Description:
       </h5>
-      <p class='collDesc pre'><%=collData.collDesc%></p>
+      <%
+      var toEdit = '';
+
+      if(collData.user_id == session.loginUserId){
+        toEdit = 'toEdit';
+      }%>
+        <p class='pre'><span class='<%=toEdit%> textBox' data-type='textarea' data-col='collDesc'><%=collData.collDesc%></span></p>
     </div>
 
     <% if(collData.user_id == session.loginUserId){%>

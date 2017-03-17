@@ -1,5 +1,10 @@
 <div class='col-md-12 collBack hasEdit'>
-  <% if(collData.user_id == session.loginUserId){%>
+
+  <% var toEdit = '';
+   if(collData.user_id == session.loginUserId){
+     toEdit = 'toEdit';
+     %>
+    <input type='hidden' value='collections' id='editTable' data-id='<%=collData.coll_id%>'>
     <div class='editPic editBackPic'>
       <button class='btn btn-primary'>Edit Cover Photo</button>
       <input class='backPicChange' type='file' style='visibility:hidden' name='/img/collectionBack_pics/<%=collId%>'>
@@ -30,18 +35,26 @@
                   <img src='/img/profile_pics/<%=collData.user_id%>' onerror="this.src='/img/profile_pics/default.jpg'" >
 
                 </div>
-                <div class='col-md-5'>
-                  <h3>Owner: </h3>
-                  <h4><%=collData.username%></h4>
-                </div>
+                <a href='/users/<%=collData.user_id%>'>
+                  <div class='col-md-5'>
+                    <h3 class='clearBack'>Owner: </h3>
+                    <h4 class='clearBack'><%=collData.username%></h4>
+                  </div>
+                </a>
               </div>
             </div>
             <div class='col-md-6 collDetails text-center'>
-              <h3><%=collData.collName%></h3>
+              <h3><span class='<%=toEdit%> must-fill' data-type='text' data-col='collName'><%=collData.collName%></span></h3>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <%
+    var type = 'collections';
+    var id = collData.coll_id;
+    var action = 'add';
+    %>
+  <% include favoriteBtn.ejs %>
 </div>

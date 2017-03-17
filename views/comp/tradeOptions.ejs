@@ -19,8 +19,8 @@
       <%}%>
   <%}%>
   <button class='btn btn-primary offerBtn' data-id='<%=trade.trade_id%>' data-toggle="modal" data-target="#viewOffer">View Offer</button>
-  <% if(trade.trader_id == session.loginUserId && trade.tradeStatus == 'Offer'){%>
-    <button class='btn btn-danger cancelOffer' data-id='<%=trade.trade_id%>' data-toggle="modal">Cancel</button>
+  <% if(trade.trader_id == session.loginUserId && (trade.tradeStatus == 'Offer' || trade.tradeStatus == 'Declined')){%>
+    <button class='btn btn-danger cancelOffer' data-id='<%=trade.trade_id%>' data-toggle="modal"><%=(trade.tradeStatus == 'Offer')?"Cancel":"Remove"%></button>
   <%}%>
   <br>
   <h5>(<%=(trade.ownerStatus == 'Canceled' || trade.traderStatus == 'Canceled')?"Canceled":trade.tradeStatus%>)</h5>
