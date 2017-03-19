@@ -22,8 +22,8 @@
                     </p>
                    <div class="row">
                        <div class="col-md-12">
-                           <p class="lead">
-                             <%=(trade.trader_id == user.id)?"RECEIVED":"TRADED"%></br>
+                            <p class="lead">
+                             <%=(trade.trader_id == user.user_id)?"RECEIVED":"TRADED"%></br>
                             </p>
                             <button class='btn btn-primary viewFullTrade' data-id="<%=trade.trade_id%>">View Full Trade</button>
                        </div>

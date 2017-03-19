@@ -83,15 +83,22 @@ function makeValues(query){
 
 function makeJoinConditions(query,connection){
   var J = " ";
+  var condFlag = 0;
+  var and = '';
   for(var i = 0;i < query.length;i++){
     var table = query[i];
     switch(table[2]){
       case "J":
-        J += table[0]+" "+table[1]+" ON ";break;
+        J += table[0]+" "+table[1]+" ON ";
+        condFlag = 0;break;
       case "C":
-        J += table[0]+"="+table[1]+" ";break;
+        and = (condFlag == 1)?'AND ':'';
+        J += and+table[0]+"="+table[1]+" ";
+        condFlag = 1;break;
       case "V":
-        J += table[0]+"="+connection.format("?",table[1])+" ";break;
+        and = (condFlag == 1)?'AND ':'';
+        J += and+table[0]+"="+connection.format("?",table[1])+" ";
+        condFlag = 1;break;
     }
   }
   return J;
@@ -344,12 +351,13 @@ app.get('/users/:id/tradehistory',function(req,res){
 app.get('/collection/:collId',function(req,res){
   var query = [
     ['JOIN','users',"J"],
-    ['users.user_id','collections.user_id',"C"]
-    // ['LEFT JOIN','fav_collections','J'],
-    // ['']
+    ['users.user_id','collections.user_id',"C"],
+    ['LEFT JOIN','fav_collections','J'],
+    ['fav_collections.coll_id','collections.coll_id',"C"],
+    ['fav_collections.user_id',(req.session.loginUserId)?req.session.loginUserId:'',"V"]
   ];
   var collId = parseInt(req.params.collId);
-  getQueryDataJoin(query,"WHERE collections.coll_id="+collId,'collections','collections.*,users.username,users.user_id'
+  getQueryDataJoin(query,"WHERE collections.coll_id="+collId,'collections','collections.*,users.username,users.user_id,count(fav_collections.coll_id) as checkFav'
   ,function(data){
     if(data){
       getQueryData({coll_id:req.params.collId,itemStatus:'Active'},"items","*",res,function(items){
@@ -542,16 +550,7 @@ app.get('/rate',function(req,res){
   });
 });
 
-app.post('/updateCollDesc',function(req,res){
-  var form = new formidable.IncomingForm();
-  form.parse(req, function(err, fields, files){
-    update({collDesc:fields.collDesc},'collections',{coll_id:fields.coll_id},function(data){
-      if(data){
-        res.send('success');
-      }
-    })
-  });
-});
+
 app.get('/getItem',function(req,res){
   getQueryData(req.query,'items','*',res,function(data){
     if(data){
@@ -612,6 +611,7 @@ app.post('/favoriteCollection',function(req,res){
     }
   });
 });
+
 app.get('/tradeOffer',function(req,res){
 //  if(req.session.loginUserId){
     var query = [

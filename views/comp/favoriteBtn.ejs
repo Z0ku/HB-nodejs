@@ -1,3 +1,6 @@
-<button class='fav-button fav-<%=type%> btn btn-default' data-id="<%=id%>" data-action='<%=action%>'>
-  <span class='glyphicon glyphicon-star-empty'></span>
-</button>
+
+<div class='fav-button'>
+  <button class='fav-<%=type%> btn btn-warning' data-id="<%=id%>" data-action='<%=action%>'>
+    <span class='glyphicon glyphicon-star<%=(action != 'add')?'':'-empty'%>'></span>
+  </button>
+</div>

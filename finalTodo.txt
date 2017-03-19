@@ -2,7 +2,7 @@
 2. Messaging
 3. Favorites
 4. Form Checking (Trades & Add Items)
-
+5. Better Alerting (Modal?Div?)
 
 Optional/Low Priority
 1. Arrange By

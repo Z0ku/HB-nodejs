@@ -52,9 +52,11 @@
     </div>
   </div>
   <%
-    var type = 'collections';
-    var id = collData.coll_id;
-    var action = 'add';
-    %>
-  <% include favoriteBtn.ejs %>
+  if(session.loginUserId){
+      var type = 'collections';
+      var id = collData.coll_id;
+      var action = (collData.checkFav == 1)?'remove':'add';
+      %>
+    <% include favoriteBtn.ejs %>
+  <%}%>
 </div>
