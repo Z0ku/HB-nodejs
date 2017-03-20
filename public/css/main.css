@@ -22,6 +22,12 @@ body{
 textarea{
   resize: vertical;
 }
+.carousel-control{
+  /*background: none !important;*/
+}
+.favCarousel{
+  height:385px;
+}
 #searchContainer{
   margin-top: 200px;
 }
@@ -29,7 +35,7 @@ textarea{
   display: none;
 }
 .pre{
-  white-space:pre;
+  white-space:pre-line;
 }
 #loading{
   position: absolute;
@@ -68,11 +74,20 @@ textarea{
     z-index: 100;
     animation: spin 2s linear infinite;
 }
+.favItems{
+  width: 100%;
+}
 .bg-danger{
    border: 4px solid #f44242;
    border-radius: 10px;
    padding-left: 15px;
    padding-right: 15px;
+}
+.bg-success{
+  border: 4px solid green;
+  border-radius: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 a{
   color:#292423;

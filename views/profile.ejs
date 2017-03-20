@@ -22,13 +22,18 @@
         <div class='row'>
           <%switch(tab){
             case 0:%>
+
             <p>Description: <span  class='<%=(user.user_id == session.loginUserId)?'toEdit':''%> textBox' data-type='textarea' data-col='userDesc'><%=user.userDesc%></span></p>
             <p>Location: <span  class='<%=(user.user_id == session.loginUserId)?'toEdit':''%>' data-type='text' data-col='userLocation'><%=(user.userLocation == null || user.userLocation == '')?'N/A':user.userLocation%></span></p>
+            <div class='col-md-12'>
+              <% include comp/collectionsCarousel.ejs %>
+            </div>
             <%break;
             case 1:%>
             <%if(user.user_id == session.loginUserId){%>
               <% include comp/newCollForm.ejs %>
             <%}%>
+
               <% include comp/collectionsView.ejs %>
             <%break;
             case 2:%>

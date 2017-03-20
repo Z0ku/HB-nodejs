@@ -1,0 +1,32 @@
+<h1 class='lead tableHead'>Favorite Collections</h1>
+<!-- <div id="collCarousel" class="row carousel slide" data-interval="500">
+  <div class="carousel-inner" role="listbox">
+
+  </div>
+</div> -->
+<div id="myCarousel" class="carousel slide favCarousel" data-ride="carousel">
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner" role="listbox">
+    <% var colls = favColls.slice(0,3);%>
+      <div class="item active favItems">
+        <% include collectionsView.ejs %>
+      </div>
+    <% for(var i = 3;i < favColls.length;i+=3){
+      colls = favColls.slice(i,i+3);%>
+      <div class='item favItems'>
+        <% include collectionsView.ejs %>
+      </div>
+    <%}%>
+  </div>
+
+  <!-- Left and right controls -->
+  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>

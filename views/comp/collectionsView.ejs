@@ -1,31 +1,45 @@
 
 <%if(colls.length != 0){
-  for(var i = 0; i < colls.length;i++){
+    if(userColls){
+      var userColls = false;
+    }
+  %>
+  <div class='row'>
+    <div class='col-md-12'>
+
+       <div class="row list-group">
+  <%for(var i = 0; i < colls.length;i++){
     var C = colls[i];
     %>
-    
 
-      <div class='col-md-12 text-left collCont'>
-        <div class='row'>
-          <div class='col-md-3 collPic'>
-            <img src='/img/collection_pics/<%=C.coll_id%>' onerror="this.src='/img/collection_pics/default.png'">
-          </div>
-          <div class='col-md-9' style='background:url("/img/collectionBack_pics/<%=C.coll_id%>"),url("/img/collectionBack_pics/default.jpg")'>
-            <a href='/collection/<%=C.coll_id%>' class='clearBack'>
-              <h4 class='clearBack'><b><%=C.collName%></b></h4>
-              <p class="collDesc clearBack"><%=C.collDesc%></p>
-            </a>
-            <%if(C.username){%>
-              <a href='/users/<%=C.user_id%>' class='clearBack'>
-                <h4>BY: <%=C.username%></h4>
-              </a>
-            <%}%>
-          </div>
-        </div>
-      </div>
+    <div class="item  col-md-4 col-lg-4">
+         <div class="thumbnail">
+             <a href='/collection/<%=C.coll_id%>'>
+               <img class="group list-group-image" src='/img/collection_pics/<%=C.coll_id%>' onerror="this.src='/img/collection_pics/default.png'" />
+             </a>
+             <div class="caption">
+                 <a href='/item/<%=C.coll_id%>'>
+                   <h4 class="group inner list-group-item-heading text-center lead">
+                     <%=C.collName%>
+                   </h4>
+                  </a>
 
-  <%}
+                  <%if(C.username){%>
+                  <a href='/users/<%=C.user_id%>'>
+                     <p class="group inner list-group-item-text">
+                        By: <%=C.username%>
+                     </p>
+                   </a>
+                   <%}%>
+             </div>
+         </div>
+     </div>
 
-}else{%>
+  <%}%>
+    </div>
+  </div>
+</div>
+
+<%}else{%>
   <h4 class='text-center'>No Collections Found.</h4>
 <%}%>

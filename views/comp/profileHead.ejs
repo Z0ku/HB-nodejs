@@ -1,6 +1,6 @@
 <div class='col-md-12 profileBack hasEdit'>
   <% var toEdit = '';
-  if(user.username == session.loginUser){
+  if(user.user_id == session.loginUserId){
     toEdit = 'toEdit';
     %>
     <input type='hidden' value='users' id='editTable' data-id='<%=session.loginUserId%>'>
@@ -28,7 +28,7 @@
       </div>
     </div>
      <div class='col-md-9 profileNav'>
-
+       <h1 style='text-shadow: 3px 3px 3px black'><%=user.username%></h1>
 
         <div class='profileNavTabs'>
           <ul class="nav nav-tabs">

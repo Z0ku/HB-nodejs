@@ -29,13 +29,19 @@
       }%>
         <p class='pre'><span class='<%=toEdit%> textBox' data-type='textarea' data-col='collDesc'><%=collData.collDesc%></span></p>
     </div>
-
+    <%if(success == 1){%>
+      <div class='bg-success'>
+        <p class='text-success'>
+          Item Successfully Added.
+        </p>
+      </div>
+      <%}%>
     <% if(collData.user_id == session.loginUserId){%>
       <% include comp/newItemForm.ejs %>
     <%}%>
     <% include comp/itemsView.ejs %>
   </div>
-  <% if(itemData.user_id !== session.loginUserId){%>
+  <% if(collData.user_id !== session.loginUserId){%>
     <% include comp/tradeForm.ejs%>
   <%}%>
 </body>

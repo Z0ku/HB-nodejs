@@ -10,6 +10,68 @@ var editOptions = {
     'Not Trading'
   ]
 };
+function formChecker(form){
+  var check = {
+    valid : true,
+    message : ""
+  };
+  form.find('.req').each(function(){
+    $(this).parent().removeClass('has-error');
+    if(!$(this).val() || $(this).val().trim() == ''){
+      check.valid = false;
+      check.message = "Missing Input in a required Field";
+      $(this).parent().addClass('has-error');
+      return false;
+    }
+  });
+  if(check.valid == true){
+    form.find('.must-float').each(function(){
+      if($(this).val() !== "" && !$(this).hasClass('req')){
+        var floatCheck = parseFloat($(this).val());
+        if(isNaN(floatCheck)){
+          check.valid = false;
+          check.message = "Invalid Input";
+          $(this).parent().addClass('has-error');
+          return false;
+        }
+      }
+    });
+  }
+  if(check.valid == true){
+    form.find('input[type="number"]').each(function(){
+      var intCheck = parseInt($(this).val());
+      var minCheck = parseInt($(this).attr('min'));
+      var maxCheck = parseInt($(this).attr('max'));
+      if(isNaN(intCheck)){
+        check.valid = false;
+        check.message = "Invalid Input";
+        $(this).parent().addClass('has-error');
+        return false;
+      }
+      if(!isNaN(minCheck) && minCheck > intCheck){
+        check.valid = false;
+        check.message = "Invalid Input";
+        $(this).parent().addClass('has-error');
+        return false;
+      }
+      if(!isNaN(maxCheck) && maxCheck < intCheck){
+        check.valid = false;
+        check.message = "Invalid Input";
+        $(this).parent().addClass('has-error');
+        return false;
+      }
+
+    });
+  }
+
+  return check;
+}
+
+$('.toEdit').attr('data-toggle','tooltip');
+$('.toEdit').attr('title','Double-click this to edit.');
+
+$('[data-toggle="tooltip"]').tooltip();
+
 $('.hasEdit').hover(function(){
   $(this).children('.editPic').show();
 },function(){
@@ -141,9 +203,11 @@ $('.offerBtn').on('click',function(){
 var valToEdit;
 var inputType;
 $(document).on("dblclick",'.toEdit',function(){
+
   $('#editor').parent().html(valToEdit);
   valToEdit = $(this).text();
   inputType = $(this).data('type');
+  $(this).tooltip('disable');
   var vals = "id='editor' class='form-control' ";
   var editor;
   var optValues;
@@ -205,6 +269,8 @@ $(document).on('click','.finishEdit',function(){
       context:'#editor',
       success: function(response){
         $('#editor').parent().html(newVal);
+        $('.toEdit').tooltip();
+
       },
       error: function(response){
         alert(response);
@@ -351,3 +417,4 @@ function changeStar(star,action){
     var star = $(this).children('span');
     changeStar(star,favData.action);
   });
+$("#collCarousel").carousel('pause');

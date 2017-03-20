@@ -1,8 +1,12 @@
 <%if(data.length !== 0){
   for(var i = 0;i < data.length;i++){%>
     <div class="searchItem row">
-      <div class="col-md-3 searchPic">
-        <img src="/img/item_pics/<%=data[i].item_id%>" onerror="this.src='/img/item_pics/default'">
+      <div class="col-md-3">
+        <div class='row'>
+          <div class='col-md-6 col-md-offset-3 searchPic'>
+            <img src="/img/item_pics/<%=data[i].item_id%>" onerror="this.src='/img/item_pics/default'">
+          </div>
+        </div>
       </div>
       <div class="col-md-7">
         <div class='text-left'>

@@ -206,6 +206,7 @@ function insertFull(query,table,res,callback){
            connection.release();
            if(err){
              console.log(err);
+             console.log("INSERT INTO "+table+" VALUES("+vals+")");
              return callback(false);
            }else{
              return callback(result);
@@ -295,8 +296,18 @@ app.get('/logout',function(req,res){
 });
 app.get('/users/:id',function(req,res){
   var user = {user_id:req.params.id};
+  var favCollectionsJoin = [
+    ["JOIN","collections","J"],
+    ["collections.coll_id","fav_collections.coll_id","C"],
+    ["JOIN","users","J"],
+    ["collections.user_id","users.user_id","C"]
+  ];
+
   getQueryData(user,"users",'*',res,function(data){
-    res.render('profile',{session:req.session,tab:0,user:data[0]});
+    var joinCond = "WHERE fav_collections.user_id = "+user.user_id;
+    getQueryDataJoin(favCollectionsJoin,joinCond,"fav_collections","fav_collections.*,collections.collName,users.username",function(favColls){
+      res.render('profile',{session:req.session,tab:0,user:data[0],favColls:favColls});
+    })
   });
 });
 app.get('/users/:id/collections',function(req,res){
@@ -304,7 +315,8 @@ app.get('/users/:id/collections',function(req,res){
   getQueryData(user,'users','*',res,function(data){
     if(data){
       var query = [['LEFT JOIN','items',"J"],['collections.coll_id','items.coll_id',"C"]];
-      getQueryDataJoin(query,"WHERE collections.user_id="+req.params.id+" GROUP BY collections.coll_id",'collections','collections.*,count(items.item_id) as itemCount',
+      var conds = "WHERE collections.user_id="+req.params.id+" GROUP BY collections.coll_id ORDER BY collections.collName ASC";
+      getQueryDataJoin(query,conds,'collections','collections.*,count(items.item_id) as itemCount',
                        function(collection){
         if(collection){
           res.render('profile',{session:req.session,tab:1,user:data[0],colls:collection});
@@ -361,7 +373,7 @@ app.get('/collection/:collId',function(req,res){
   ,function(data){
     if(data){
       getQueryData({coll_id:req.params.collId,itemStatus:'Active'},"items","*",res,function(items){
-        res.render('collection',{session:req.session,collId:collId,collData:data[0],I:items});
+        res.render('collection',{session:req.session,collId:collId,collData:data[0],I:items,success:req.query.success});
       })
     }
   })
@@ -418,7 +430,7 @@ app.post('/deleteItem',function(req,res){
         update({tradeStatus:'Declined'},"trades",{item_id:fields.item_id,tradeStatus:'Offer'},function(check){});
         getQueryData(fields,'tradeItems','trade_id',res,function(trades){
           for(var i = 0;i < trades.length;i++){
-            update({tradeStatus:'Declined'},"trades",{trade_id:trades[i].trade_id,tradeStatus:'Offer'},function(trade){});
+            deleteCol({trade_id:trades[i].trade_id,tradeStatus:'Offer'},"trades",res,function(trade){});
           }
         });
         res.send('This item has been deleted.');
@@ -429,7 +441,24 @@ app.post('/deleteItem',function(req,res){
   });
 });
 app.post('/deleteCollection',function(){
-
+  var form = new formidable.IncomingForm();
+  form.parse(req,function(err,fields,files){
+    var id = {coll_id:fields.id};
+    getQueryData(id,"items","item_id",res,function(items){
+        for(var i = 0;i < items.length;i++){
+          update({itemStatus:'Deleted'},'items',{item_id:items[i].item_id},function(data){
+            if(data.affectedRows == 1){
+              update({tradeStatus:'Declined'},"trades",{item_id:items[i].item_id,tradeStatus:'Offer'},function(check){});
+              getQueryData({item_id:items[i].item_id},'tradeItems','trade_id',res,function(trades){
+                  for(var i = 0;i < trades.length;i++){
+                    deleteCol({trade_id:trades[i].trade_id,tradeStatus:'Offer'},"trades",res,function(trade){});
+                  }
+                });
+              }
+          });
+        }
+    });
+  });
 });
 app.post('/update',function(req,res){
   var form = new formidable.IncomingForm();
@@ -502,6 +531,7 @@ app.post('/addItem',function(req,res){
         if(files['itemPic']){
           fs.rename(files['itemPic'].path, path.join(form.uploadDir,data.insertId.toString()));
         }
+        res.send('succes');
       }
     });
   });

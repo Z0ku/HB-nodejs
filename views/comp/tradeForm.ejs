@@ -18,19 +18,20 @@
                   <strong>Type: </strong><span class='itemType'></span></br>
                   <strong>Condition:</strong><span class='itemCondition'></span></br>
                   <strong>Quantity: </strong><span class='quantity'></span></br></br>
+                  <strong>Price: </strong><span class='tradePrice'></span></br></br>
                 </p>
                 <dl>
                   <dt>Description:</dt>
-                  <dd class='pre'></br><span class='itemDesc'></span></dd>
+                  <dd class='pre-line'></br><span class='itemDesc'></span></dd>
                 </dl>
               </div>
             </div>
           </div>
           <div class='col-md-7'>
-            <div class='form-group' id='tradeOffer' style='position:relative'>
+            <div class='form-inline' id='tradeOffer' style='position:relative'>
               <h4 class='text-center'>Your Offer</h4>
-              Trade Quantity:<input type='number' value='1' min='1' id='tradeQuantity' class='form-control'></br></br>
-              Price Offer:<input type='text' id='priceOffer' class='form-control'>
+              Trade Quantity:<input type='number' value='1' min='1' id='tradeQuantity' class='form-control must-int'>
+              Price Offer:<input type='text' id='priceOffer' class='form-control must-float' >
               <table class="table table-inverse">
                 <thead>
                   <tr>
@@ -43,11 +44,16 @@
 
                 </tbody>
               </table>
+
+            </div>
+            <div class='form-group'>
               Trade Description:
               <textarea class='form-control' id='tradeDesc'></textarea>
-              <input type="text" class='form-control' id='userItemSearch' placeholder="Search Your Items" style="border-radius:0">
-              <div class='searchDrop' tabindex="-1" >
-              </div>
+            </div>
+          </div>
+          <div class='col-md-12'>
+            <input type="text" class='form-control' id='userItemSearch' placeholder="Search Your Items" style="border-radius:0">
+            <div class='searchDrop' tabindex="-1" >
             </div>
           </div>
         </div>
