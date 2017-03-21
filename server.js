@@ -7,7 +7,7 @@ var app = express();
 var mysql = require('mysql');
 var crypto = require('crypto');
 var util = require('util');
-var nodemysql = require('node-mysql'); //FIGURE OUT!!!
+// var nodemysql = require('node-mysql'); //FIGURE OUT!!!
 var MySQLStore = require('express-mysql-session')(session);
 
 
@@ -304,10 +304,14 @@ app.get('/users/:id',function(req,res){
   ];
 
   getQueryData(user,"users",'*',res,function(data){
-    var joinCond = "WHERE fav_collections.user_id = "+user.user_id;
-    getQueryDataJoin(favCollectionsJoin,joinCond,"fav_collections","fav_collections.*,collections.collName,users.username",function(favColls){
-      res.render('profile',{session:req.session,tab:0,user:data[0],favColls:favColls});
-    })
+    if(data){
+      var joinCond = "WHERE fav_collections.user_id = "+user.user_id;
+      getQueryDataJoin(favCollectionsJoin,joinCond,"fav_collections","fav_collections.*,collections.collName,users.username",function(favColls){
+        res.render('profile',{session:req.session,tab:0,user:data[0],favColls:favColls});
+      });
+    }else{
+      res.redirect('/notFound');
+    }
   });
 });
 app.get('/users/:id/collections',function(req,res){
@@ -325,6 +329,7 @@ app.get('/users/:id/collections',function(req,res){
         }
       });
     }else{
+        res.redirect('/notFound');
 
     }
   });
@@ -353,10 +358,14 @@ var fullTradeQuery = [
 app.get('/users/:id/tradehistory',function(req,res){
   var user = {user_id:req.params.id};
   getQueryData(user,'users','*',res,function(data){
-    var conds = "WHERE (trades.user_id="+data[0].user_id+" OR collections.user_id="+data[0].user_id+") AND trades.tradeStatus='Completed' ORDER BY trades.dateSent DESC"
-    getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(tradeOffers){
-      res.render('profile',{session:req.session,tab:2,user:data[0],tradeHistory:tradeOffers});
-    });
+    if(data){
+      var conds = "WHERE (trades.user_id="+data[0].user_id+" OR collections.user_id="+data[0].user_id+") AND trades.tradeStatus='Completed' ORDER BY trades.dateSent DESC"
+      getQueryDataJoin(fullTradeQuery,conds,'trades',fullTradeData,function(tradeOffers){
+        res.render('profile',{session:req.session,tab:2,user:data[0],tradeHistory:tradeOffers});
+      });
+    }else{
+      res.redirect('/notFound');
+    }
   });
 });
 
@@ -369,15 +378,35 @@ app.get('/collection/:collId',function(req,res){
     ['fav_collections.user_id',(req.session.loginUserId)?req.session.loginUserId:'',"V"]
   ];
   var collId = parseInt(req.params.collId);
+  var q = (req.query.q)?" AND LOWER(items.itemName) LIKE LOWER("+mysql.format("?","%"+req.query.q+"%")+")":"";
   getQueryDataJoin(query,"WHERE collections.coll_id="+collId,'collections','collections.*,users.username,users.user_id,count(fav_collections.coll_id) as checkFav'
   ,function(data){
-    if(data){
-      getQueryData({coll_id:req.params.collId,itemStatus:'Active'},"items","*",res,function(items){
-        res.render('collection',{session:req.session,collId:collId,collData:data[0],I:items,success:req.query.success});
+    if(data[0].coll_id){
+      getQueryDataJoin([],"WHERE coll_id="+req.params.collId+" AND itemStatus='Active'"+q,"items","*",function(items){
+        res.render('collection',{session:req.session,collId:collId,collData:data[0],I:items,success:req.query.success,q:req.query.q});
       })
+    }else{
+      res.redirect('/notFound');
     }
   })
 });
+// Dont really need this for now
+// app.get('/fullTrade',function(req,res){
+//   var id = "WHERE trade_id = "+req.query.trade_id;
+//   getQueryDataJoin(fullTradeQuery,id,"trades",fullTradeData,function(tradeData){
+//     if(tradeData){
+//       var tradeItemQuery = [
+//         ["JOIN","items","J"]
+//       ];
+//       getQueryDataJoin(tradeItemQuery,id,"trades","trades.*,items.name",function(tradeItems){
+//         res.send('comp/fullTrade',{session:req.session,tradeData:tradeData,tradeItems:tradeItems});
+//       });
+//     }else{
+//       res.send("Trade Not Found");
+//     }
+//   });
+// });
+
 app.get('/item/:id',function(req,res){
   var item = [
   ['JOIN','collections',"J"],
@@ -387,14 +416,14 @@ app.get('/item/:id',function(req,res){
 ];
   var id = "WHERE items.item_id="+req.params.id;
   getQueryDataJoin(item,id,"items","items.*,collections.collName,collections.user_id,users.username",function(data){
-    if(data){
+    if(data[0]){
       getQueryDataJoin(fullTradeQuery,'WHERE trades.item_id = '+req.params.id+" AND trades.tradeStatus = 'Offer' ","trades",fullTradeData,function(itemOffers){
         getQueryData({user_id:data['user_id']},"users","username",res,function(userData){
           res.render('item',{session:req.session,itemData:data[0],user:userData[0],itemOffers:itemOffers});
         });
       });
     }else{
-      res.end('Error Fetching Item Data.')
+      res.redirect('/notFound');
     }
   });
 });
@@ -565,20 +594,21 @@ app.get('/searchUserItems/:id',function(req,res){
     }
   });
 });
-app.get('/rate',function(req,res){
-  req.query.user_id = req.session.loginUserId;
-  exists({id:req.query.id,type:req.query.table,user_id:req.session.loginUserId},'ratings',res,function(check){
-    if(check){
-      update({rating:req.query.rating},"ratings",res,function(data){
-        res.json({added:true});
-      });
-    }else{
-      insertFull(req.query,'ratings',res,function(data){
-        res.json({added:false});
-      });
-    }
-  });
-});
+// rating system
+// app.get('/rate',function(req,res){
+//   req.query.user_id = req.session.loginUserId;
+//   exists({id:req.query.id,type:req.query.table,user_id:req.session.loginUserId},'ratings',res,function(check){
+//     if(check){
+//       update({rating:req.query.rating},"ratings",res,function(data){
+//         res.json({added:true});
+//       });
+//     }else{
+//       insertFull(req.query,'ratings',res,function(data){
+//         res.json({added:false});
+//       });
+//     }
+//   });
+// });
 
 
 app.get('/getItem',function(req,res){
@@ -595,9 +625,9 @@ app.post('/addNewTrade',function(req,res){
       if(data){
         for(var i = 0;i < fields.items.length;i++){
           fields.items[i].push(data.insertId);
-          insertFull(fields.items[i],'tradeItems',res,function(data){
-          });
+          insertFull(fields.items[i],'tradeItems',res,function(data){});
         }
+        res.send('success');
       }
     });
   });
@@ -605,8 +635,8 @@ app.post('/addNewTrade',function(req,res){
 app.post('/acceptTrade',function(req,res){
   var form = new formidable.IncomingForm
   form.parse(req, function(err, fields, files){
-    update({tradeStatus:'Currently Trading'},"trades",{trade_id:fields.trade_id},function(updateCheck){
-      if(updateCheck){
+    update({tradeStatus:'Currently Trading'},"trades",{trade_id:fields.trade_id,tradeStatus:'Offer'},function(updateCheck){
+      if(updateCheck.affectedRows > 0){
           var newTradeStatus = {
                                 trade_id:fields.trade_id,
                                 ownerStatus:'Not Received',
@@ -617,6 +647,8 @@ app.post('/acceptTrade',function(req,res){
               res.send('Accepted Trade');
             }
           });
+      }else{
+        res.send('Trade was already canceled');
       }
     });
   });
@@ -724,10 +756,13 @@ app.get('/confirmReceive',function(req,res){
   });
 });
 app.get('/cancelOffer',function(req,res){ // Work on this
-  deleteCol(req.query,"trades",res,function(check){
+  // console.log(req.query);
+  deleteCol({trade_id:req.query.trade_id,tradeStatus:'Offer'},"trades",res,function(check){
     if(check.affectedRows > 0){
       deleteCol(req.query,"tradeItems",res,function(data){});
       res.send('Offer Canceled');
+    }else{
+      res.send('Offer has already been accepted/declined.')
     }
   });
 });
@@ -770,4 +805,8 @@ app.get('/trades',function(req,res){
     res.redirect('/login');
   }
 });
+app.get('*',function(req,res){
+    res.render('notFound.ejs',{session:req.session});
+});
+
 app.listen(81);

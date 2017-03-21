@@ -2,7 +2,7 @@
 
 <html>
 <head>
-   <title>HB</title>
+   <title><%=collData.collName%> - HobbyBase</title>
    <% include comp/csslinks.ejs %>
    <style>
      .collBack{
@@ -38,6 +38,15 @@
       <%}%>
     <% if(collData.user_id == session.loginUserId){%>
       <% include comp/newItemForm.ejs %>
+    <%}%>
+    <div class='form-group'>
+      <form action='' method="get">
+        <input class='form-control' name='q' type='text' placeholder="Search Items in this Collection">
+      </form>
+    </div>
+    <%if(q){%>
+      <h3 class='lead'> Showing Results for "<%=q%>" : </h3>
+
     <%}%>
     <% include comp/itemsView.ejs %>
   </div>

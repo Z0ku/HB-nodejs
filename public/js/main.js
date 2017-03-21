@@ -26,6 +26,7 @@ function formChecker(form){
   });
   if(check.valid == true){
     form.find('.must-float').each(function(){
+      $(this).parent().removeClass('has-error');
       if($(this).val() !== "" && !$(this).hasClass('req')){
         var floatCheck = parseFloat($(this).val());
         if(isNaN(floatCheck)){
@@ -39,6 +40,7 @@ function formChecker(form){
   }
   if(check.valid == true){
     form.find('input[type="number"]').each(function(){
+      $(this).parent().removeClass('has-error');
       var intCheck = parseInt($(this).val());
       var minCheck = parseInt($(this).attr('min'));
       var maxCheck = parseInt($(this).attr('max'));
@@ -156,36 +158,46 @@ $('#mainSearchBar').on('keyup',function(){
 });
 
 $("#sendTradeOffer").on('click',function(){
-  var tradeData;
-  tradeData = [7];
-  tradeData[0]= '';
-  tradeData[1] = curr_trade;
-  tradeData[2]= sessUser;
-  tradeData[3] = $('#tradeQuantity').val();
-  tradeData[4] = 'Offer';
-  tradeData[5] = parseFloat($('#priceOffer').val());
-  tradeData[6] = $('#tradeDesc').val();
-  tradeData[7] = '';
+  var checkForm = formChecker($('#tradeForm').find('.modal-body'));
 
-  var tradeItems = [];
-  $('.tradeItemRow').each(function(index){
-    var tradeItem  = [];
-    tradeItem.push($(this).data('itemid'));
-    tradeItem.push($(this).find('.tradeQuant').val());
-    tradeItems.push(tradeItem);
-  });
+  if(checkForm.valid == true){
+    //alert('worked');
+    var tradeData;
+    tradeData = [7];
+    tradeData[0]= '';
+    tradeData[1] = curr_trade;
+    tradeData[2]= sessUser;
+    tradeData[3] = $('#tradeQuantity').val();
+    tradeData[4] = 'Offer';
+    tradeData[5] = parseFloat($('#priceOffer').val());
+    tradeData[6] = $('#tradeDesc').val();
+    tradeData[7] = '';
 
-  var newTrade = {
-    data:tradeData,
-    items:tradeItems
+    var tradeItems = [];
+    $('.tradeItemRow').each(function(index){
+      var tradeItem  = [];
+      tradeItem.push($(this).data('itemid'));
+      tradeItem.push($(this).find('.tradeQuant').val());
+      tradeItems.push(tradeItem);
+    });
+
+    var newTrade = {
+      data:tradeData,
+      items:tradeItems
+    };
+    $.ajax({
+      url: '/addNewTrade',
+      type:"POST",
+      data:JSON.stringify(newTrade),
+      contentType: "application/json",
+      success: function(response){
+        alert('Trade Sent!');
+        window.location.href = window.location.href;
+      }
+    });
+  }else{
+    alert(checkForm.message);
   }
-  $.ajax({
-    url: '/addNewTrade',
-    type:"POST",
-    data:JSON.stringify(newTrade),
-    contentType: "application/json"
-  })
-
 });
 $('.offerBtn').on('click',function(){
   var id = $(this).data('id');

@@ -39,7 +39,7 @@ $(document).on('click','.addTradeItem',function(){
     $('#tradeItems').append(
       "<tr class='tradeItemRow'  data-itemid='"+itemId+"'>"+
         "<td class='tradeItemName'>"+tradeItemName+"</td>"+
-        "<td class='form-inline'><input class='tradeQuant form-control' type='number' value='1' min='1' max='"+maxQuant+"'></td>"+
+        "<td class='form-inline'><input class='tradeQuant form-control must-int' type='number' value='1' min='1' max='"+maxQuant+"'></td>"+
         "<td>"+delTradeButton+"</td>"+
       "</tr>"
     )

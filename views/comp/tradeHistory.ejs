@@ -1,6 +1,6 @@
 <div class='row'>
   <div class='col-md-12'>
-    <div class='row'>
+    <div class='row' data-user='<%=user.user_id%>'>
     <% if(tradeHistory.length != 0){
         for(var i = 0;i < tradeHistory.length;i++){
             var trade = tradeHistory[i];
@@ -25,7 +25,7 @@
                             <p class="lead">
                              <%=(trade.trader_id == user.user_id)?"RECEIVED":"TRADED"%></br>
                             </p>
-                            <button class='btn btn-primary viewFullTrade' data-id="<%=trade.trade_id%>">View Full Trade</button>
+                            <button class='btn btn-primary offerBtn' data-id='<%=trade.trade_id%>' data-toggle="modal" data-target="#viewOffer">View Offer</button>
                        </div>
                    </div>
                </div>
@@ -35,8 +35,11 @@
 
     <%
       }
-    }%>
+    }else{%>
 
+      <h3 class='text-center lead'>No Trade History found.</h3>
+    <%}%>
     </div>
   </div>
 </div>
+<% include viewOfferModal.ejs%>

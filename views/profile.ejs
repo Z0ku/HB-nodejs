@@ -2,7 +2,7 @@
 
 <html>
 <head>
-   <title>HB</title>
+   <title><%=user.username%> - HB</title>
    <% include comp/csslinks.ejs %>
    <style>
     .profileBack{
@@ -20,11 +20,23 @@
       <% include comp/profileHead.ejs %>
       <div class='col-md-10 col-md-offset-1 mainCont'>
         <div class='row'>
-          <%switch(tab){
+          <%
+          var toEdit = (user.user_id == session.loginUserId)?'toEdit':'';
+          switch(tab){
             case 0:%>
 
-            <p>Description: <span  class='<%=(user.user_id == session.loginUserId)?'toEdit':''%> textBox' data-type='textarea' data-col='userDesc'><%=user.userDesc%></span></p>
-            <p>Location: <span  class='<%=(user.user_id == session.loginUserId)?'toEdit':''%>' data-type='text' data-col='userLocation'><%=(user.userLocation == null || user.userLocation == '')?'N/A':user.userLocation%></span></p>
+            <p>Description: <span  class='<%=toEdit%> textBox' data-type='textarea' data-col='userDesc'><%=user.userDesc%></span></p>
+            <p>Location:
+              <span  class='<%=toEdit%>' data-type='text' data-col='userLocation'>
+                <%=(user.userLocation == null || user.userLocation == '')?'N/A':user.userLocation%>
+              </span>
+            </p>
+            <p>Email:
+              <span  class='<%=toEdit%> must-fill' data-type='text' data-col='email'>
+                <%=user.email%>
+              </span>
+            </p>
+
             <div class='col-md-12'>
               <% include comp/collectionsCarousel.ejs %>
             </div>
